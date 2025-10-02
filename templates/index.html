@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Run main_app - Epic Prompt</title>
+    <style>
+        body{
+               font-family: Arial, sans-serif;
+               background: url("{{ url_for('static', filename='bg_bidv.png') }}") no-repeat center center fixed;
+               background-size: cover; /* ảnh phủ toàn màn hình */
+               padding:24px;
+             }
+             .card{
+               max-width:720px;
+               margin: 100px auto 0 auto; /* trên 100px, trái phải auto, dưới 0 */
+               background:rgba(255,255,255,1.0); /* nền trắng hơi trong suốt */
+               padding:32px;
+               border-radius:12px;
+               box-shadow:0 6px 18px rgba(0,0,0,0.1);
+             }
+             h2{
+               text-align:center;
+               margin-bottom:24px;
+               color:#171F21;
+             }
+             label{
+               display:block;
+               margin-top:12px;
+               font-weight:600;
+               color:#171F21;
+             }
+             input[type="text"], textarea{
+               width:100%;
+               padding:10px;
+               border-radius:6px;
+               border:1px solid #ddd;
+               margin-top:6px
+             }
+             .hint{
+               color:#9C9C9C;
+               font-size:13px;
+               margin-top:4px;
+               margin-bottom:8px;
+               font-style:italic;
+             }
+             .radio-group{margin-top:12px}
+             .radio-group span{color:#444}
+             .radio-group label{font-weight:400; margin-right:16px; color:#333}
+             .btn-container{text-align:center;margin-top:16px}
+             button{
+               padding:12px 24px;
+               border-radius:6px;
+               border:none;
+               background:#005C59;
+               color:#fff;
+               cursor:pointer;
+               font-size:16px;
+               font-weight:600;
+               transition:background 0.2s ease;
+             }
+             button:hover{background:#004a99}
+             .small-btn {
+           padding:10px 12px;
+           border-radius:6px;
+           border:none;
+           background:#005C59;
+           color:#fff;
+           cursor:pointer;
+           font-size:13px;
+           font-weight:600;
+           transition:background 0.2s ease;
+         }
+         .small-btn:hover {
+           background:#004a99;
+         }
+             pre{
+               background:#f7f9fc;
+               padding:16px;
+               border-radius:8px;
+               border:1px solid #eee;
+               white-space:pre-wrap;
+               word-wrap:break-word;
+               color:#0a3d62;
+               font-size:14px;
+             }
+             .flash{
+               padding:10px;
+               border-radius:6px;
+               margin-bottom:12px
+             }
+             .error{
+               background:#ffe7e7;
+               border:1px solid #f5b4b4;
+               color:#8a1b1b
+             }
+             .info{
+               background:#e8f3ff;
+               border:1px solid #bcd7ff;
+               color:#034a8b
+             }
+             input::placeholder,
+             textarea::placeholder {
+                 color: #9EABAD;   /* màu tím */
+                 font-style: italic; /* cho placeholder nghiêng nhẹ */
+                 opacity: 1;        /* đảm bảo màu không bị nhạt */
+             }
+    </style>
+</head>
+<body>
+
+
+<div class="card">
+    <!-- Title vào trong card -->
+    <h2>Auto Backlog and Planning</h2>
+
+    <form id="epicForm" action="{{ url_for('run') }}" method="post">
+
+        <label for="url_doc" style="display:block; font-weight:600; color:#171F21;">URL Doc</label>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}" required style="flex:1;"
+                   placeholder="Dán đường dẫn Confluence của tài liệu vào đây để quét và trích xuất yêu cầu tự động"/>
+            <button type="button" class="small-btn" onclick="fillFromServer()">Quét</button>
+        </div>
+
+        <label for="epic_name">Epic Name</label>
+        <input id="epic_name" name="epic_name" type="text" value="{{ epic|default('') }}" required
+               placeholder="Nhập tên của chức năng/dự án (ví dụ: Quản lý tài chính cá nhân)"/>
+
+        <label for="business_goal">Business Goal</label>
+        <input id="business_goal" name="business_goal" type="text" value="{{ goal|default('') }}"
+               placeholder="Mục tiêu (ví dụ: Giúp cho người dùng có thể kiểm soát được dòng tiền thu, chi của bản thân)"/>
+
+        <label for="high_level_desc">High-level Description</label>
+        <textarea id="high_level_desc" name="high_level_desc" rows="4" placeholder="Mô tả ngắn gọn (ví dụ: Ứng dụng bao gồm các tính năng ghi chép thu chi, thống kê, báo cáo chi
+            tiêu, có cả trên Web và Mobile)">{{ desc|default('') }}</textarea>
+
+        <div style="width:100%;" class="btn-container">
+            <button style="width:100%;" type="submit">Xử Lý</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    async function fillFromServer() {
+      // Lấy giá trị từ url_doc
+      const urlDoc = document.getElementById("url_doc").value;
+      var link_request = '/get_fill_data?doc=' + encodeURIComponent(urlDoc)
+      const res = await fetch(link_request);
+      const data = await res.json();
+      document.getElementById("epic_name").value = data.epic_name;
+      document.getElementById("business_goal").value = data.business_goal;
+      document.getElementById("high_level_desc").value = data.high_level_desc;
+    }
+</script>
+</body>
+</html>
