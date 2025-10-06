@@ -1,5 +1,5 @@
-from alllatsian.confluence_service_handle import create_table_est_for_doc_step
-from alllatsian.jira_service_handle import create_lst_user_story_step, create_lst_task_step
+from alllatsian.confluence.confluence_service_handle import create_table_est_for_doc_step
+from alllatsian.jira.jira_task_controller import create_lst_user_story_step, create_lst_task_step
 
 
 def main_app(epic_name, business_goal, high_level_desc, task_type):

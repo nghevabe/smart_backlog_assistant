@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 
 import main
-from utils import scaner
+from extracter import scaner
 
 # Nếu main_app nằm trong module khác, import vào đây. Ví dụ:
 # from your_module import main_app
