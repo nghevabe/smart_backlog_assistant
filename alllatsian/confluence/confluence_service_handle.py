@@ -1,9 +1,10 @@
 import re
 from atlassian import Confluence
+
+from alllatsian.jira import jira_task_service_handle
 from utils.constant import jira_api_token
-from alllatsian import jira_service_handle, genarate_plan
-from utils import parser_content
-from data.data_app import lstUserStory, lstTask
+from alllatsian.utils import genarate_plan, parser_content
+from data.data_app import lstTask
 
 confluence = Confluence(
     url='https://bidv-ba-assistant317.atlassian.net/wiki',
@@ -25,7 +26,7 @@ def agent_gen_estimate_doc(promt):
     parser_content.url_est_doc_full = "https://bidv-ba-assistant317.atlassian.net/wiki" + match[0]
     print(parser_content.url_est_doc_full)
 
-    jira_service_handle.attach_link_confluence_to_task()
+    jira_task_service_handle.attach_link_confluence_to_task()
 
 
 def create_table_est_for_doc_step():

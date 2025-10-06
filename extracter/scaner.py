@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import html
 import re
-from alllatsian.confluence_service_handle import confluence
+from alllatsian.confluence.confluence_service_handle import confluence
 
 
 def get_page_id(url):

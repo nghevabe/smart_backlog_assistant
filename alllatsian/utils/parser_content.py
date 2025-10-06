@@ -1,6 +1,7 @@
 import re
 import time
-from alllatsian import jira_service_handle
+
+from alllatsian.jira import jira_task_service_handle
 from data.data_app import lstTask
 from model.task_item import TaskItem
 
@@ -22,7 +23,7 @@ def parse_subtask(res, story_id, story_content):
 
     for i in range(len(lst_sub_task_title)):
         day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
-        jira_service_handle.create_sub_task(story_id,
+        jira_task_service_handle.create_sub_task(story_id,
                                             lst_sub_task_title[i],
                                             lst_sub_task_content[i],
                                             day_number,
