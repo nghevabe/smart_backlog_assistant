@@ -1,6 +1,10 @@
+import re
 from openai import OpenAI
+from alllatsian.utils.parser_content import regexTitle, regexContent, regexEstimate, regexTeam, regexNumber
+from data.data_app import lstUserStoryPreview, lstTaskItemPreview
+from model.task_item import TaskItem
+from model.user_story_item import UserStoryItem
 from utils import constant
-from alllatsian.utils import parser_content
 from utils.constant import model_config, user_config
 from utils.promts import promt_im_pmo_want_create_us, promt_create_content_subtask_feature, \
     promt_create_content_subtask_project
@@ -37,9 +41,34 @@ acceptance criteria here
     return completion.choices[0].message.content
 
 
-def agent_gen_sub_task_for_new_feature(story_id, story_content, promt):
+def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc):
+    res = agent_gen_user_story(epic_name,
+                               business_goal,
+                               high_level_desc)
+    lst_story = res.split("#begin_response#")
+
+    for story in lst_story:
+        if "#start#" in story:
+            title_str = story.split("#tit_start#")[1]
+            title = title_str.split("#tit_end#")[0].strip()
+
+            content_str = story.split("#des_start#")[1]
+            content = content_str.split("#des_end#")[0].strip()
+
+            criteria_str = story.split("#start#")[1]
+            criteria = criteria_str.split("#end#")[0].strip()
+
+            us_preview = UserStoryItem(title=title, content=content, criteria=criteria, uid='')
+            lstUserStoryPreview.append(us_preview)
+
+
+def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     content_head = promt_im_pmo_want_create_us
-    content_foot = promt_create_content_subtask_feature
+
+    if requirement_type == "1":
+        content_foot = promt_create_content_subtask_project
+    else:
+        content_foot = promt_create_content_subtask_feature
     full_content = content_head + "' " + promt + " '" + content_foot
 
     completion = client.chat.completions.create(
@@ -50,24 +79,16 @@ def agent_gen_sub_task_for_new_feature(story_id, story_content, promt):
     )
 
     response_data = completion.choices[0].message.content
-    parser_content.parse_subtask(response_data, story_id, story_content)
 
-    return response_data
+    lst_sub_task_title = re.findall(regexTitle, response_data)
+    lst_sub_task_content = re.findall(regexContent, response_data)
+    lst_sub_task_estimate = re.findall(regexEstimate, response_data)
+    lst_sub_task_team = re.findall(regexTeam, response_data)
+    print("agent_gen_sub_task_preview")
+    for i in range(len(lst_sub_task_title)):
+        day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
 
-
-def agent_gen_sub_task_for_new_project(story_id, story_content, promt):
-    content_head = promt_im_pmo_want_create_us
-    content_foot = promt_create_content_subtask_project
-    full_content = content_head + "' " + promt + " '" + content_foot
-
-    completion = client.chat.completions.create(
-        model=model_config,
-        messages=[
-            {"role": user_config, "content": full_content}
-        ]
-    )
-
-    response_data = completion.choices[0].message.content
-    parser_content.parse_subtask(response_data, story_id, story_content)
-
-    return response_data
+        task_item = TaskItem(user_story_id=story_id, title=lst_sub_task_title[i], des=lst_sub_task_content[i],
+                             team=lst_sub_task_team[i],
+                             manday=day_number)
+        lstTaskItemPreview.append(task_item)

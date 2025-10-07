@@ -1,9 +1,9 @@
-def generate_row_header(stt, task_item):
+def generate_row_header(stt, task_item, user_story_title):
     return f"""
             <tr>
               <td data-label="STT">{stt}</td>
-              <td data-label="Chức năng / User Story" class="content-cell"><strong>{task_item.user_story}</strong></td>
-              <td data-label="Tên chức năng / Subtask">{task_item.sub_task}</td>
+              <td data-label="Chức năng / User Story" class="content-cell"><strong>{user_story_title}</strong></td>
+              <td data-label="Tên chức năng / Subtask">{task_item.title}</td>
               <td data-label="Mô tả sơ bộ nội dung" class="small">{task_item.des}</td>
               <td data-label="Nhóm thực hiện">{task_item.team}</td>
               <td data-label="Khái toán mandays">{task_item.manday}</td>
@@ -16,7 +16,7 @@ def generate_row_normal(stt, task_item):
             <tr>
               <td data-label="STT">{stt}</td>
               <td data-label="Chức năng / User Story" class="content-cell"></td>
-              <td data-label="Tên chức năng / Subtask">{task_item.sub_task}</td>
+              <td data-label="Tên chức năng / Subtask">{task_item.title}</td>
               <td data-label="Mô tả sơ bộ nội dung" class="small">{task_item.des}</td>
               <td data-label="Nhóm thực hiện">{task_item.team}</td>
               <td data-label="Khái toán mandays">{task_item.manday}</td>
