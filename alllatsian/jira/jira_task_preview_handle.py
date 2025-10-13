@@ -61,6 +61,8 @@ def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc
             us_preview = UserStoryItem(title=title, content=content, criteria=criteria, uid='')
             lstUserStoryPreview.append(us_preview)
 
+    return lstUserStoryPreview
+
 
 def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     content_head = promt_im_pmo_want_create_us
@@ -78,13 +80,15 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
         ]
     )
 
+    print("agent_gen_sub_task_preview_start:")
     response_data = completion.choices[0].message.content
 
     lst_sub_task_title = re.findall(regexTitle, response_data)
     lst_sub_task_content = re.findall(regexContent, response_data)
     lst_sub_task_estimate = re.findall(regexEstimate, response_data)
     lst_sub_task_team = re.findall(regexTeam, response_data)
-    print("agent_gen_sub_task_preview")
+
+    print("lst_sub_task_title: "+str(len(lst_sub_task_title)))
     for i in range(len(lst_sub_task_title)):
         day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
 

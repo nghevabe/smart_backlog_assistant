@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Auto Backlog & Jira Processing</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      color: #003366;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #005C59;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    h2 {
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #171F21;
+    }
+
+    #resultBox {
+      display: none;
+      max-width: 880px;
+      margin: 24px auto;
+      text-align: left;
+    }
+
+    .jira-item {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      border-left: 6px solid #005C59;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .jira-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .jira-id {
+      font-weight: 600;
+      font-size: 14px;
+      color: #005C59;
+      background: #eaf6f4;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-weight: 600;
+      color: #003366;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #171F21;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 24px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      background: #005C59;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover { background: #004a99; }
+  </style>
+</head>
+
+<body>
+  <div id="loader" class="loader"></div>
+  <h2 id="statusText">Đang khởi tạo Step 1: User Story Preview...</h2>
+
+  <div id="resultBox"></div>
+
+  <div style="margin-top:24px;">
+    <button id="nextBtn" style="display:none;">Lưu & Chuyển sang Step 2 ➜</button>
+  </div>
+
+  <script>
+    const payload = {
+      epic_name: {{ epic|tojson }},
+      business_goal: {{ goal|tojson }},
+      high_level_desc: {{ desc|tojson }},
+      requirement_type: {{ requirement|tojson }}
+    };
+    let currentStep = 1;
+    let currentItems = [];
+
+    async function runStep(step) {
+      const loader = document.getElementById("loader");
+      const nextBtn = document.getElementById("nextBtn");
+      const status = document.getElementById("statusText");
+      const box = document.getElementById("resultBox");
+
+      loader.style.display = "block";
+      nextBtn.style.display = "none";
+      box.style.display = "none";
+      status.textContent = "Đang chạy Step " + step + "...";
+
+      try {
+        const res = await fetch("/run_step", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({...payload, step})
+        });
+        const data = await res.json();
+
+        loader.style.display = "none";
+
+        if (data.status === "success") {
+          currentItems = data.result;
+          status.textContent = "Kết quả Step " + step + ": " + currentItems.length + " User Story được tạo";
+          renderItems(currentItems);
+          nextBtn.style.display = "inline-block";
+        } else {
+          status.textContent = "❌ Lỗi: " + data.message;
+        }
+      } catch (err) {
+        loader.style.display = "none";
+        status.textContent = "❌ Lỗi kết nối: " + err.message;
+      }
+    }
+
+    function renderItems(items) {
+      const box = document.getElementById("resultBox");
+      box.innerHTML = "";
+      box.style.display = "block";
+
+      items.forEach((it, idx) => {
+        const el = document.createElement("div");
+        el.className = "jira-item";
+        el.innerHTML = `
+          <div class="jira-id">#${it.uid || (idx + 1)}</div>
+
+          <label class="section-title">Title</label>
+          <input type="text" id="title-${idx}" value="${escapeHtml(it.title)}">
+
+          <label class="section-title">Description</label>
+          <textarea id="content-${idx}" rows="4">${escapeHtml(it.content)}</textarea>
+
+          <label class="section-title">Acceptance Criteria</label>
+          <textarea id="criteria-${idx}" rows="3">${escapeHtml(it.criteria)}</textarea>
+        `;
+        box.appendChild(el);
+      });
+    }
+
+    // Escape để tránh phá vỡ HTML khi render giá trị có ký tự đặc biệt
+    function escapeHtml(str) {
+      if (str == null) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", async () => {
+      // Thu thập theo INDEX để tránh vấn đề uid rỗng
+      const updated = currentItems.map((it, idx) => ({
+        // uid có thể rỗng ở step 1; backend đang map theo index nên không cần uid
+        title: document.getElementById(`title-${idx}`).value.trim(),
+        content: document.getElementById(`content-${idx}`).value.trim(),
+        criteria: document.getElementById(`criteria-${idx}`).value.trim()
+      }));
+
+      try {
+        // 1) Lưu tất cả theo index
+        const res = await fetch("/update_all_items", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({items: updated})
+        });
+        const data = await res.json();
+
+        if (data.status === "success") {
+          // 2) Chuyển bước
+          currentStep++;
+          if (currentStep <= 5) {
+            runStep(currentStep);
+          } else {
+            document.getElementById("statusText").textContent = "🎉 Hoàn tất toàn bộ 5 bước!";
+            document.getElementById("nextBtn").style.display = "none";
+          }
+        } else {
+          alert("❌ Lỗi: " + data.message);
+        }
+      } catch (err) {
+        alert("❌ Lỗi kết nối: " + err.message);
+      }
+    });
+
+    // Auto chạy Step 1 khi load
+    runStep(1);
+  </script>
+</body>
+</html>
