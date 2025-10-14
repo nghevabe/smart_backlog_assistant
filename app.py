@@ -79,15 +79,26 @@ def run_step():
                 {"uid": x.uid, "title": x.title, "content": x.content, "criteria": x.criteria}
                 for x in lst
             ]
+            return jsonify({"status": "success", "result": result, "step": 1})
+
         elif step == 2:
             main.create_list_user_story_jira_step()
-            lst = lstUserStoryItem
+            return jsonify({"status": "success", "result": [], "step": 2})
+
+        elif step == 3:
+            main.create_lst_task_preview_step("0")
+            lst = lstTaskItemPreview
 
             result = [
-                {"uid": x.uid, "title": x.title, "content": x.content, "criteria": x.criteria}
+                {"uid": x.user_story_id, "title": x.title, "content": x.des, "team": x.team, "manday": x.manday}
                 for x in lst
             ]
-        # ... Step 3–5 tương tự ...
+            return jsonify({"status": "success", "result": result, "step": 3})
+        # ... Step 4–5 tương tự ...
+        elif step == 4:
+            main.create_task_jira_step()
+            return jsonify({"status": "success", "result": [], "step": 4})
+        # ... Step 4–5 tương tự ...
         else:
             return jsonify({"status": "error", "message": "Invalid step"}), 400
 

@@ -37,7 +37,7 @@ acceptance criteria here
              }
         ]
     )
-    print(completion.choices[0].message.content)
+    # print(completion.choices[0].message.content)
     return completion.choices[0].message.content
 
 
@@ -82,6 +82,8 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
 
     print("agent_gen_sub_task_preview_start:")
     response_data = completion.choices[0].message.content
+
+    print("response_data: "+response_data)
 
     lst_sub_task_title = re.findall(regexTitle, response_data)
     lst_sub_task_content = re.findall(regexContent, response_data)

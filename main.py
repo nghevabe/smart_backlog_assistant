@@ -17,7 +17,7 @@ def main_app(epic_name, business_goal, high_level_desc, task_type):
     create_lst_task_preview_step(task_type)
     # |
     # |
-    # Step 4: Create Task/SubTask List Jira
+    # Step 4: Create Task/SubTask List Jira (output: lstTaskItem)
     create_task_jira_step()
     # |
     # |

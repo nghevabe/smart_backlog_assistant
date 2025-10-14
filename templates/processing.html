@@ -1,123 +1,123 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Auto Backlog & Jira Processing</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Auto Backlog & Jira Processing</title>
 
-  <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f6f8fb;
-      color: #003366;
-      text-align: center;
-      padding: 40px;
-    }
+    <style>
+        body {
+          font-family: "Segoe UI", Arial, sans-serif;
+          background: #f6f8fb;
+          color: #003366;
+          text-align: center;
+          padding: 40px;
+        }
 
-    .loader {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid #005C59;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
-    }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
+        .loader {
+          border: 8px solid #f3f3f3;
+          border-top: 8px solid #005C59;
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 16px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    h2 {
-      font-weight: 600;
-      margin-bottom: 24px;
-      color: #171F21;
-    }
+        h2 {
+          font-weight: 600;
+          margin-bottom: 24px;
+          color: #171F21;
+        }
 
-    #resultBox {
-      display: none;
-      max-width: 880px;
-      margin: 24px auto;
-      text-align: left;
-    }
+        #resultBox {
+          display: none;
+          max-width: 880px;
+          margin: 24px auto;
+          text-align: left;
+        }
 
-    .jira-item {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      padding: 20px 24px;
-      margin-bottom: 20px;
-      border-left: 6px solid #005C59;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      animation: fadeIn 0.25s ease;
-    }
+        .jira-item {
+          background: #fff;
+          border-radius: 12px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+          padding: 20px 24px;
+          margin-bottom: 20px;
+          border-left: 6px solid #005C59;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          animation: fadeIn 0.25s ease;
+        }
 
-    .jira-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
+        .jira-item:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
 
-    .jira-id {
-      font-weight: 600;
-      font-size: 14px;
-      color: #005C59;
-      background: #eaf6f4;
-      padding: 4px 10px;
-      border-radius: 6px;
-      display: inline-block;
-      margin-bottom: 6px;
-    }
+        .jira-id {
+          font-weight: 600;
+          font-size: 14px;
+          color: #005C59;
+          background: #eaf6f4;
+          padding: 4px 10px;
+          border-radius: 6px;
+          display: inline-block;
+          margin-bottom: 6px;
+        }
 
-    .section-title {
-      font-weight: 600;
-      color: #003366;
-      margin-bottom: 4px;
-      display: block;
-    }
+        .section-title {
+          font-weight: 600;
+          color: #003366;
+          margin-bottom: 4px;
+          display: block;
+        }
 
-    input, textarea {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-bottom: 12px;
-      font-family: inherit;
-      font-size: 14px;
-      color: #171F21;
-    }
+        input, textarea {
+          width: 100%;
+          padding: 8px 10px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+          margin-bottom: 12px;
+          font-family: inherit;
+          font-size: 14px;
+          color: #171F21;
+        }
 
-    textarea {
-      resize: vertical;
-    }
+        textarea {
+          resize: vertical;
+        }
 
-    button {
-      margin-top: 24px;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 6px;
-      background: #005C59;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    button:hover { background: #004a99; }
-  </style>
+        button {
+          margin-top: 24px;
+          padding: 12px 24px;
+          border: none;
+          border-radius: 6px;
+          background: #005C59;
+          color: white;
+          font-weight: 600;
+          cursor: pointer;
+          font-size: 15px;
+        }
+        button:hover { background: #004a99; }
+    </style>
 </head>
 
 <body>
-  <div id="loader" class="loader"></div>
-  <h2 id="statusText">Đang khởi tạo Step 1: User Story Preview...</h2>
+<div id="loader" class="loader"></div>
+<h2 id="statusText">Đang khởi tạo Step 1: User Story Preview...</h2>
 
-  <div id="resultBox"></div>
+<div id="resultBox"></div>
 
-  <div style="margin-top:24px;">
+<div style="margin-top:24px;">
     <button id="nextBtn" style="display:none;">Lưu & Chuyển sang Step 2 ➜</button>
-  </div>
+</div>
 
-  <script>
+<script>
     const payload = {
       epic_name: {{ epic|tojson }},
       business_goal: {{ goal|tojson }},
@@ -149,12 +149,22 @@
         loader.style.display = "none";
 
         if (data.status === "success") {
-          currentItems = data.result;
-          status.textContent = "Kết quả Step " + step + ": " + currentItems.length + " User Story được tạo";
-          renderItems(currentItems);
-          nextBtn.style.display = "inline-block";
+  currentItems = data.result;
+  if (data.step === 1) {
+    status.textContent = "Kết quả Step 1: " + currentItems.length + " User Story được tạo";
+    if (currentItems.length > 0) renderItems(currentItems);
+  }
+  else if (data.step === 3) {
+    status.textContent = "Kết quả Step 3: " + currentItems.length + " Task/Subtask Preview được tạo";
+    if (currentItems.length > 0) renderSubTask(currentItems);
+  }
+  else
+    status.textContent = "Đã hoàn thành Step " + data.step;
+
+
+  nextBtn.style.display = "inline-block";
         } else {
-          status.textContent = "❌ Lỗi: " + data.message;
+          status.textContent = "❌ XXX Lỗi: " + data.message;
         }
       } catch (err) {
         loader.style.display = "none";
@@ -181,6 +191,28 @@
 
           <label class="section-title">Acceptance Criteria</label>
           <textarea id="criteria-${idx}" rows="3">${escapeHtml(it.criteria)}</textarea>
+        `;
+        box.appendChild(el);
+      });
+    }
+
+    function renderSubTask(items) {
+      const box = document.getElementById("resultBox");
+      box.innerHTML = "";
+      box.style.display = "block";
+
+      items.forEach((it, idx) => {
+        const el = document.createElement("div");
+        el.className = "jira-item";
+        el.innerHTML = `
+          <div class="jira-id">#${it.uid || (idx + 1)}</div>
+
+          <label class="section-title">Title SubTask</label>
+          <input type="text" id="title-${idx}" value="${escapeHtml(it.title)}">
+
+          <label class="section-title">Description SubTask</label>
+          <textarea id="content-${idx}" rows="4">${escapeHtml(it.content)}</textarea>
+
         `;
         box.appendChild(el);
       });
@@ -224,7 +256,7 @@
             document.getElementById("nextBtn").style.display = "none";
           }
         } else {
-          alert("❌ Lỗi: " + data.message);
+          alert("❌ Lỗi ZZZ: " + data.message);
         }
       } catch (err) {
         alert("❌ Lỗi kết nối: " + err.message);
@@ -233,6 +265,6 @@
 
     // Auto chạy Step 1 khi load
     runStep(1);
-  </script>
+</script>
 </body>
 </html>
