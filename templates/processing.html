@@ -117,6 +117,11 @@
     <button id="nextBtn" style="display:none;">Lưu & Chuyển sang Step 2 ➜</button>
 </div>
 
+<div style="margin-top:24px;">
+    <button id="nextBtnStep3" style="display:none;">Lưu & Chuyển sang Step 3 ➜</button>
+</div>
+
+
 <script>
     const payload = {
       epic_name: {{ epic|tojson }},
@@ -130,11 +135,13 @@
     async function runStep(step) {
       const loader = document.getElementById("loader");
       const nextBtn = document.getElementById("nextBtn");
+      const nextBtnStep3 = document.getElementById("nextBtnStep3");
       const status = document.getElementById("statusText");
       const box = document.getElementById("resultBox");
 
       loader.style.display = "block";
       nextBtn.style.display = "none";
+      nextBtnStep3.style.display = "none";
       box.style.display = "none";
       status.textContent = "Đang chạy Step " + step + "...";
 
@@ -151,18 +158,26 @@
         if (data.status === "success") {
   currentItems = data.result;
   if (data.step === 1) {
+    nextBtn.style.display = "inline-block";
     status.textContent = "Kết quả Step 1: " + currentItems.length + " User Story được tạo";
     if (currentItems.length > 0) renderItems(currentItems);
   }
+  if (data.step === 2){
+    nextBtn.style.display = "inline-block";
+  }
   else if (data.step === 3) {
+    nextBtnStep3.style.display = "inline-block";
     status.textContent = "Kết quả Step 3: " + currentItems.length + " Task/Subtask Preview được tạo";
     if (currentItems.length > 0) renderSubTask(currentItems);
+  }
+  if (data.step === 4){
+   nextBtnStep3.style.display = "inline-block";
   }
   else
     status.textContent = "Đã hoàn thành Step " + data.step;
 
 
-  nextBtn.style.display = "inline-block";
+
         } else {
           status.textContent = "❌ XXX Lỗi: " + data.message;
         }
@@ -170,6 +185,7 @@
         loader.style.display = "none";
         status.textContent = "❌ Lỗi kết nối: " + err.message;
       }
+
     }
 
     function renderItems(items) {
@@ -254,6 +270,41 @@
           } else {
             document.getElementById("statusText").textContent = "🎉 Hoàn tất toàn bộ 5 bước!";
             document.getElementById("nextBtn").style.display = "none";
+          }
+        } else {
+          alert("❌ Lỗi ZZZ: " + data.message);
+        }
+      } catch (err) {
+        alert("❌ Lỗi kết nối: " + err.message);
+      }
+    });
+
+
+    document.getElementById("nextBtnStep3").addEventListener("click", async () => {
+      // Thu thập theo INDEX để tránh vấn đề uid rỗng
+      const updated = currentItems.map((it, idx) => ({
+        // uid có thể rỗng ở step 1; backend đang map theo index nên không cần uid
+        title: document.getElementById(`title-${idx}`).value.trim(),
+        content: document.getElementById(`content-${idx}`).value.trim()
+      }));
+
+      try {
+        // 1) Lưu tất cả theo index
+        const res = await fetch("/update_all_sub_tasks", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({items: updated})
+        });
+        const data = await res.json();
+
+        if (data.status === "success") {
+          // 2) Chuyển bước
+          currentStep++;
+          if (currentStep <= 5) {
+            runStep(currentStep);
+          } else {
+            document.getElementById("statusText").textContent = "🎉 Hoàn tất toàn bộ 5 bước!";
+            document.getElementById("nextBtnStep3").style.display = "none";
           }
         } else {
           alert("❌ Lỗi ZZZ: " + data.message);

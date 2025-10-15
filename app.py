@@ -110,6 +110,7 @@ def run_step():
 
 from flask import request, jsonify
 
+
 @app.route("/update_all_items", methods=["POST"])
 def update_all_items():
     """
@@ -147,7 +148,39 @@ def update_all_items():
         }), 500
 
 
+@app.route("/update_all_sub_tasks", methods=["POST"])
+def update_all_sub_tasks():
+    """
+    Cập nhật toàn bộ item trong lstUserStoryPreview theo thứ tự index.
+    Fix: đảm bảo mỗi item được cập nhật riêng biệt, không ghi đè lẫn nhau.
+    """
 
+    data = request.get_json(silent=True) or {}
+    items = data.get("items") or []
+
+    try:
+        n = min(len(items), len(lstTaskItemPreview))
+        for i in range(n):
+            upd = dict(items[i])  # tạo bản copy riêng biệt, tránh tham chiếu
+            itm = lstTaskItemPreview[i]
+
+            # Cập nhật từng field riêng rẽ, không tạo lại object
+            if "title" in upd and upd["title"] is not None:
+                itm.title = str(upd["title"])
+            if "content" in upd and upd["content"] is not None:
+                itm.des = str(upd["content"])
+
+        return jsonify({
+            "status": "success",
+            "updated": n,
+            "mode": "index"
+        })
+
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 
 # Trang kết quả (đơn giản)
