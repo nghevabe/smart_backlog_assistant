@@ -162,22 +162,15 @@
     status.textContent = "Kết quả Step 1: " + currentItems.length + " User Story được tạo";
     if (currentItems.length > 0) renderItems(currentItems);
   }
-  if (data.step === 2){
-    nextBtn.style.display = "inline-block";
-  }
+  if (data.step === 2){skipToNetxtStep();}
   else if (data.step === 3) {
     nextBtnStep3.style.display = "inline-block";
     status.textContent = "Kết quả Step 3: " + currentItems.length + " Task/Subtask Preview được tạo";
     if (currentItems.length > 0) renderSubTask(currentItems);
   }
-  if (data.step === 4){
-   nextBtnStep3.style.display = "inline-block";
-  }
+  if (data.step === 4){skipToNetxtStep();}
   else
     status.textContent = "Đã hoàn thành Step " + data.step;
-
-
-
         } else {
           status.textContent = "❌ XXX Lỗi: " + data.message;
         }
@@ -244,8 +237,16 @@
         .replace(/"/g, "&quot;");
     }
 
-    document.getElementById("nextBtn").addEventListener("click", async () => {
-      // Thu thập theo INDEX để tránh vấn đề uid rỗng
+
+async function skipToNetxtStep() {
+  currentStep++;
+  await new Promise(resolve => setTimeout(resolve, 500));
+  runStep(currentStep);
+}
+
+
+    async function createUserStoryStep() {
+     // Thu thập theo INDEX để tránh vấn đề uid rỗng
       const updated = currentItems.map((it, idx) => ({
         // uid có thể rỗng ở step 1; backend đang map theo index nên không cần uid
         title: document.getElementById(`title-${idx}`).value.trim(),
@@ -263,24 +264,26 @@
         const data = await res.json();
 
         if (data.status === "success") {
-          // 2) Chuyển bước
+
           currentStep++;
           if (currentStep <= 5) {
             runStep(currentStep);
           } else {
             document.getElementById("statusText").textContent = "🎉 Hoàn tất toàn bộ 5 bước!";
-            document.getElementById("nextBtn").style.display = "none";
+            document.getElementById("nextBtnStep3").style.display = "none";
           }
         } else {
           alert("❌ Lỗi ZZZ: " + data.message);
         }
+
       } catch (err) {
         alert("❌ Lỗi kết nối: " + err.message);
       }
-    });
+}
 
 
-    document.getElementById("nextBtnStep3").addEventListener("click", async () => {
+
+    async function createSubTaskStep() {
       // Thu thập theo INDEX để tránh vấn đề uid rỗng
       const updated = currentItems.map((it, idx) => ({
         // uid có thể rỗng ở step 1; backend đang map theo index nên không cần uid
@@ -312,7 +315,10 @@
       } catch (err) {
         alert("❌ Lỗi kết nối: " + err.message);
       }
-    });
+}
+
+    document.getElementById("nextBtn").addEventListener("click", async () => {createUserStoryStep();});
+    document.getElementById("nextBtnStep3").addEventListener("click", async () => { createSubTaskStep();});
 
     // Auto chạy Step 1 khi load
     runStep(1);
