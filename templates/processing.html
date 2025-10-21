@@ -1,134 +1,169 @@
 <!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Auto Backlog & Jira Processing</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auto Backlog & Jira Processing</title>
 
-    <style>
-        body {
-          font-family: "Segoe UI", Arial, sans-serif;
-          background: #f6f8fb;
-          color: #003366;
-          text-align: center;
-          padding: 40px;
-        }
+<style>
+  body {
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(145deg, #eef2f7, #f9fbfd);
+    color: #1b263b;
+    text-align: center;
+    padding: 40px;
+  }
 
-        .loader {
-          border: 8px solid #f3f3f3;
-          border-top: 8px solid #005C59;
-          border-radius: 50%;
-          width: 60px;
-          height: 60px;
-          animation: spin 1s linear infinite;
-          margin: 0 auto 16px;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+  .loader {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #00796b;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        h2 {
-          font-weight: 600;
-          margin-bottom: 24px;
-          color: #171F21;
-        }
+  h2 {
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #0f3057;
+    letter-spacing: 0.3px;
+  }
 
-        #resultBox {
-          display: none;
-          max-width: 880px;
-          margin: 24px auto;
-          text-align: left;
-        }
+  #resultBox {
+    display: none;
+    max-width: 900px;
+    margin: 24px auto;
+    text-align: left;
+  }
 
-        .jira-item {
-          background: #fff;
-          border-radius: 12px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-          padding: 20px 24px;
-          margin-bottom: 20px;
-          border-left: 6px solid #005C59;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          animation: fadeIn 0.25s ease;
-        }
+  /* ==== ITEM CARD ==== */
+  .jira-item {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    padding: 10px 42px;
+    margin-bottom: 32px;
+    border: 2px solid #00796b;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+  }
 
-        .jira-item:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
+  .jira-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  }
 
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+  .jira-id {
+    position: absolute;
+    top: -12px;
+    right: 16px;
+    background: #e0f2f1;
+    color: #004d40;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  }
 
-        .jira-id {
-          font-weight: 600;
-          font-size: 14px;
-          color: #005C59;
-          background: #eaf6f4;
-          padding: 4px 10px;
-          border-radius: 6px;
-          display: inline-block;
-          margin-bottom: 6px;
-        }
+  .section-title {
+    font-weight: 600;
+    color: #004d40;
+    font-size: 14px;
+    margin-bottom: 6px;
+    margin-top: 10px;
+    display: block;
+  }
 
-        .section-title {
-          font-weight: 600;
-          color: #003366;
-          margin-bottom: 4px;
-          display: block;
-        }
+  input, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d0d7de;
+    margin-bottom: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #212529;
+    background-color: #f9fbfc;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
 
-        input, textarea {
-          width: 100%;
-          padding: 8px 10px;
-          border-radius: 6px;
-          border: 1px solid #ccc;
-          margin-bottom: 12px;
-          font-family: inherit;
-          font-size: 14px;
-          color: #171F21;
-        }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #00796b;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(0,121,107,0.1);
+  }
 
-        textarea {
-          resize: vertical;
-        }
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
 
-        button {
-          margin-top: 24px;
-          padding: 12px 24px;
-          border: none;
-          border-radius: 6px;
-          background: #005C59;
-          color: white;
-          font-weight: 600;
-          cursor: pointer;
-          font-size: 15px;
-        }
-        button:hover { background: #004a99; }
-    </style>
+  button {
+    margin-top: 28px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #00796b, #004d40);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    transition: all 0.25s ease;
+  }
+  button:hover {
+    background: linear-gradient(135deg, #009688, #00695c);
+    transform: translateY(-2px);
+  }
+
+  /* Label group for nicer alignment */
+  .jira-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 700px) {
+    .jira-fields {
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 20px;
+    }
+    textarea {
+      grid-column: span 2;
+    }
+  }
+
+</style>
 </head>
 
 <body>
-<div id="loader" class="loader"></div>
-<h2 id="statusText">Đang tạo dach sách User Story 1</h2>
+  <div id="loader" class="loader"></div>
+  <h2 id="statusText">Đang tạo danh sách User Story...</h2>
 
-<div id="resultBox"></div>
+  <div id="resultBox"></div>
 
-<div style="margin-top:24px;">
-    <button id="nextBtn" style="display:none;">Đẩy toàn bộ User Story lên Jira</button>
-</div>
+  <div style="margin-top:28px;">
+    <button id="nextBtn" style="display:none;">💾 Đẩy toàn bộ User Story lên Jira</button>
+  </div>
 
-<div style="margin-top:24px;">
-    <button id="nextBtnStep3" style="display:none;">Đẩy toàn bộ Task/SubTask lên Jira</button>
-</div>
+  <div style="margin-top:18px;">
+    <button id="nextBtnStep3" style="display:none;">💾 Đẩy toàn bộ Task/SubTask lên Jira</button>
+  </div>
 
+  <script>
 
-<script>
     const payload = {
       epic_name: {{ epic|tojson }},
       business_goal: {{ goal|tojson }},
       high_level_desc: {{ desc|tojson }},
       requirement_type: {{ requirement|tojson }}
     };
+
     let currentStep = 1;
     let currentItems = [];
 
