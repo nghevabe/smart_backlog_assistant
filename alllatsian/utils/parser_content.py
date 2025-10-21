@@ -2,7 +2,7 @@ import re
 import time
 
 from alllatsian.jira import jira_task_service_handle
-from data.data_app import lstTask
+from data.data_app import lstTaskItem
 from model.task_item import TaskItem
 
 regexTitle = r'\@(.*)\@'
@@ -24,13 +24,14 @@ def parse_subtask(res, story_id, story_content):
     for i in range(len(lst_sub_task_title)):
         day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
         jira_task_service_handle.create_sub_task(story_id,
-                                            lst_sub_task_title[i],
-                                            lst_sub_task_content[i],
-                                            day_number,
-                                            lst_sub_task_team[i])
+                                                 lst_sub_task_title[i],
+                                                 lst_sub_task_content[i],
+                                                 day_number,
+                                                 lst_sub_task_team[i])
 
-        task_item = TaskItem(story_content, lst_sub_task_title[i], lst_sub_task_content[i], lst_sub_task_team[i], day_number)
-        lstTask.append(task_item)
+        task_item = TaskItem(story_content, lst_sub_task_title[i], lst_sub_task_content[i], lst_sub_task_team[i],
+                             day_number)
+        lstTaskItem.append(task_item)
         time.sleep(0.5)
 
 
