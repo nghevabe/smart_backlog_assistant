@@ -98,7 +98,10 @@ def run_step():
         elif step == 4:
             main.create_task_jira_step()
             return jsonify({"status": "success", "result": [], "step": 4})
-        # ... Step 4–5 tương tự ...
+        # ... Step 5 tương tự ...
+        elif step == 5:
+            main.create_table_est_for_doc_step()
+            return jsonify({"status": "success", "result": [], "step": 5})
         else:
             return jsonify({"status": "error", "message": "Invalid step"}), 400
 

@@ -109,16 +109,16 @@
 
 <body>
 <div id="loader" class="loader"></div>
-<h2 id="statusText">Đang khởi tạo Step 1: User Story Preview...</h2>
+<h2 id="statusText">Đang tạo dach sách User Story 1</h2>
 
 <div id="resultBox"></div>
 
 <div style="margin-top:24px;">
-    <button id="nextBtn" style="display:none;">Lưu & Chuyển sang Step 2 ➜</button>
+    <button id="nextBtn" style="display:none;">Đẩy toàn bộ User Story lên Jira</button>
 </div>
 
 <div style="margin-top:24px;">
-    <button id="nextBtnStep3" style="display:none;">Lưu & Chuyển sang Step 3 ➜</button>
+    <button id="nextBtnStep3" style="display:none;">Đẩy toàn bộ Task/SubTask lên Jira</button>
 </div>
 
 
@@ -143,7 +143,16 @@
       nextBtn.style.display = "none";
       nextBtnStep3.style.display = "none";
       box.style.display = "none";
-      status.textContent = "Đang chạy Step " + step + "...";
+
+             stepContentTitle =
+    step === 1 ? "Đang tạo dach sách User Story..." :
+    step === 2 ? "Đang đẩy toàn bộ User Story lên Jira..." :
+    step === 3 ? "Đang tạo dach sách Task/SubTask..." :
+    step === 4 ? "Đang đẩy toàn bộ Task/SubTask lên Jira..." :
+    step === 5 ? "Đang tạo kế hoạch và khái toán trên Confluence..." :
+      "Quá trình đã hoàn tất. Hãy truy cập Workspace trên Jira để xem những nội dung mới tạo";
+
+      status.textContent = stepContentTitle;
 
       try {
         const res = await fetch("/run_step", {
@@ -170,7 +179,15 @@
   }
   if (data.step === 4){skipToNetxtStep();}
   else
-    status.textContent = "Đã hoàn thành Step " + data.step;
+    // status.textContent = "Đã hoàn thành Step " + data.step;
+
+       stepContent =
+    data.step === 1 ? "Danh sách User Story Preview" :
+    data.step === 3 ? "Danh sách Sub Task Preview" :
+      "Quá trình đã hoàn tất. Hãy truy cập Workspace trên Jira để xem những nội dung mới tạo";
+
+      status.textContent = stepContent;
+
         } else {
           status.textContent = "❌ XXX Lỗi: " + data.message;
         }
