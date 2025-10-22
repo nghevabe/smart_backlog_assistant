@@ -25,16 +25,17 @@ def content_extraction(id_page):
     table = decoded_content.split("<tbody>")
     for item in table:
         if "Quy tắc nghiệp vụ (nếu có)" in item:
-            print(item)
-            name_regex = r'<strong>Tên</strong></p></td><td data-highlight-colour="#ffffff"><p>(.*)</p></td></tr><tr><td data-highlight-colour="#f4f5f7"><p><strong>Mô tả</strong>'
-            des_regex = r'<p><strong>Mô tả</strong></p></td><td data-highlight-colour="#ffffff"><p>(.*)</p></td></tr><tr><td data-highlight-colour="#f4f5f7"><p><strong>Tác nhân</strong>'
-            result_regex = r'<strong>Kết quả mong muốn</strong></p>(.*)<p><strong>Quy tắc nghiệp vụ'
-            match_name = re.findall(name_regex, item)
-            match_des = re.findall(des_regex, item)
-            match_result = re.findall(result_regex, item)
-            name = BeautifulSoup(match_name[0], "html.parser").get_text(separator="\n")
-            des = BeautifulSoup(match_des[0], "html.parser").get_text(separator="\n")
-            result = BeautifulSoup(match_result[0], "html.parser").get_text(separator="\n")
+            soup = BeautifulSoup(item, "html.parser")
+            # Tìm tất cả tag có tên bắt đầu bằng "ac:"
+            for tag in soup.find_all(lambda t: t.name and t.name.startswith("ac:")):
+                tag.unwrap()  # Bỏ tag, giữ lại nội dung bên trong
+
+            clean_html = str(soup)
+            map_items_in_row = parse_confluence_table(clean_html)
+
+            name = map_items_in_row[0][1]
+            des = map_items_in_row[1][1]
+            result = map_items_in_row[5][1]
             print("match_name: " + name)
             print("match_des: " + des)
             print("match_result: " + result)
@@ -48,3 +49,17 @@ def scan_page_content(url):
     # return content_extraction(get_page_id("https://bidv-ba-assistant317.atlassian.net/wiki/spaces/BAAI/pages/8028225/URD+CNR+VA+5.+BO_B+o+c+o+b+ng+k+kho+n+ph+i+thu"))
 
 
+def parse_confluence_table(html_str: str):
+    soup = BeautifulSoup(html_str, "html.parser")
+    rows_data = []
+
+    # Lặp qua từng hàng <tr>
+    for tr in soup.find_all("tr"):
+        cols = tr.find_all("td")
+        if not cols:
+            continue  # bỏ qua nếu không có cột
+        # Lấy text từng cột, loại bỏ xuống dòng và khoảng trắng thừa
+        col_texts = [col.get_text(separator=" ", strip=True) for col in cols]
+        rows_data.append(col_texts)
+
+    return rows_data

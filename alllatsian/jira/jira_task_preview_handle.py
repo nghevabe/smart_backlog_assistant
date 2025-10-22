@@ -42,6 +42,7 @@ acceptance criteria here
 
 
 def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc):
+
     res = agent_gen_user_story(epic_name,
                                business_goal,
                                high_level_desc)

@@ -7,23 +7,23 @@ from alllatsian.utils import genarate_plan, parser_content
 from data.data_app import lstTaskItem, lstUserStoryItem
 
 confluence = Confluence(
-    url='https://bidv-ba-assistant317.atlassian.net/wiki',
-    username="tranhoanglinh317@gmail.com",
+    url='https://bidv-vn.atlassian.net/wiki/',
+    username="linhth8@bidv.com.vn",
     password=jira_api_token,
     cloud=True)
 
 
 def agent_gen_estimate_doc(promt):
     status = confluence.create_page(
-        space='BAAI',
-        title='Page Gen 15',
+        space='KH0012024',
+        title='Page Gen Planning',
         body=promt
     )
 
     s = str(status.get('_links'))
     regex = r"'webui': '(.*)', 'edituiv2'"
     match = re.findall(regex, s)
-    parser_content.url_est_doc_full = "https://bidv-ba-assistant317.atlassian.net/wiki" + match[0]
+    parser_content.url_est_doc_full = "https://bidv-vn.atlassian.net/wiki" + match[0]
     print(parser_content.url_est_doc_full)
 
     jira_task_service_handle.attach_link_confluence_to_task()

@@ -20,7 +20,7 @@ Giờ tôi muốn tạo ra ngẫu nhiên từ 12 đến 16 SubTask con của Use
 + Test các màn hình.
 
 Response trả ra phải có đủ 4 thông tin và format có các ký tự đặc biệt để thuận lợi cho việc parsing như sau:
-Title: @title here@ Description: ^description here^ Estimate day: ++estimate day here++ Team(Web or Mobile or Backend or UI/UX or QC): --team here--
+Title: #tit_start#title here#tit_end# Description: #des_start#description here#des_end# Estimate day: #est_start#estimate day here#est_end# Team(Web or Mobile or Backend or UI/UX or QC): #team_start#team here#team_end#
 """
 
 
@@ -51,7 +51,7 @@ Giờ tôi muốn tạo ra ngẫu nhiên từ 15 đến 20 SubTask con của Use
 + Test các màn hình.
 
 Response trả ra phải có đủ 4 thông tin và format có các ký tự đặc biệt để thuận lợi cho việc parsing như sau:
-Title: @title here@ Description: ^description here^ Estimate day: ++estimate day here++ Team(Web or Mobile or Backend or UI/UX or QC): --team here--
+Title: #tit_start#title here#tit_end# Description: #des_start#description here#des_end# Estimate day: #est_start#estimate day here#est_end# Team(Web or Mobile or Backend or UI/UX or QC): #team_start#team here#team_end#
 """
 
 

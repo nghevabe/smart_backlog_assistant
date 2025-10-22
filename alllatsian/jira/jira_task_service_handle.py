@@ -1,4 +1,6 @@
 import time
+from datetime import date, timedelta
+
 from jira import JIRA
 from openai import OpenAI
 
@@ -9,9 +11,9 @@ from utils.constant import jira_api_token
 from data.data_app import lstUserStoryItem, lstUserStoryPreview, lstTaskItem, lstTaskItemPreview
 from model.user_story_item import UserStoryItem
 
-# Define your JIRA server and credentials
-jira_server = 'https://bidv-ba-assistant317.atlassian.net'
-jira_username = 'tranhoanglinh317@gmail.com'
+jira_server = 'https://bidv-vn.atlassian.net'
+jira_username = 'linhth8@bidv.com.vn'
+
 # Connect to JIRA
 jira = JIRA(server=jira_server, basic_auth=(jira_username, jira_api_token))
 # list UserStoryItem
@@ -29,12 +31,18 @@ def create_user_story_item(user_story_item):
     content = user_story_item.content
     criteria = user_story_item.criteria
 
+    start_date = date.today().isoformat()
+    due_date = (date.today() + timedelta(days=10)).isoformat()
+
     full_description = content + "\n\n" + "Acceptance Criteria:" + "\n" + criteria
     issue_dict = {
-        'project': {'key': 'SCRUM'},  # Replace with your project key
+        'project': {'key': 'KH01420231'},
         'summary': title,
         'description': full_description,
-        'issuetype': {'name': 'Story'},  # Replace with the desired issue type
+        'issuetype': {'name': 'Story'},
+        'customfield_10035': start_date,
+        'duedate': due_date,
+        'assignee': {'id': None}
     }
 
     # Create the issue
@@ -48,10 +56,14 @@ def create_user_story_item(user_story_item):
 
 
 def create_sub_task(parent_id, title, content, estimate, team):
+
+    start_date = date.today().isoformat()
+    due_date = (date.today() + timedelta(days=10)).isoformat()
+
     subtask = {
         "project":
             {
-                "key": "SCRUM"
+                "key": "KH01420231"
             },
         "parent":
             {
@@ -61,11 +73,16 @@ def create_sub_task(parent_id, title, content, estimate, team):
         "description": content,
         "issuetype":
             {
-                "name": "SubTask"
+                "name": "Sub-task"
             },
         "timetracking": {
             "originalEstimate": estimate + "d"
         },
+        "customfield_10035": start_date,
+        "duedate": due_date,
+        "components": [{"id": "11284"}],
+        "customfield_10084": {"value": "UI/UX_Thiết kế cho các PM trung bình"},
+        'assignee': {'id': None}
     }
 
     # Create the issue

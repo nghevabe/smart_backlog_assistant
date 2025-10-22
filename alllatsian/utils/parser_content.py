@@ -5,10 +5,10 @@ from alllatsian.jira import jira_task_service_handle
 from data.data_app import lstTaskItem
 from model.task_item import TaskItem
 
-regexTitle = r'\@(.*)\@'
-regexContent = r'\^(.*)\^'
-regexEstimate = r'\+\+(.*)\+\+'
-regexTeam = r'\-\-(.*)\-\-'
+regexTitle = r'#tit_start#(.*)#tit_end#'
+regexContent = r'#des_start#(.*)#des_end#'
+regexEstimate = r'#est_start#(.*)#est_end#'
+regexTeam = r'#team_start#(.*)#team_end#'
 regexNumber = r'\d+'
 regexUrlDocEstimate = r"'webui': '(.*) ',"
 url_est_doc_full = ""
