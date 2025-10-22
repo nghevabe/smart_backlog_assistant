@@ -7,15 +7,12 @@ from openai import OpenAI
 from model.task_item import TaskItem
 from utils import constant
 from alllatsian.utils import parser_content
-from utils.constant import jira_api_token
+from utils.constant import jira_api_token, alllatsian_id_namespace, alllatsian_username, jira_project_space
 from data.data_app import lstUserStoryItem, lstUserStoryPreview, lstTaskItem, lstTaskItemPreview
 from model.user_story_item import UserStoryItem
 
-jira_server = 'https://bidv-vn.atlassian.net'
-jira_username = 'linhth8@bidv.com.vn'
-
 # Connect to JIRA
-jira = JIRA(server=jira_server, basic_auth=(jira_username, jira_api_token))
+jira = JIRA(server=alllatsian_id_namespace, basic_auth=(alllatsian_username, jira_api_token))
 # list UserStoryItem
 client = OpenAI(api_key=constant.open_api_key)
 
@@ -36,7 +33,7 @@ def create_user_story_item(user_story_item):
 
     full_description = content + "\n\n" + "Acceptance Criteria:" + "\n" + criteria
     issue_dict = {
-        'project': {'key': 'KH01420231'},
+        'project': {'key': jira_project_space},
         'summary': title,
         'description': full_description,
         'issuetype': {'name': 'Story'},
@@ -63,7 +60,7 @@ def create_sub_task(parent_id, title, content, estimate, team):
     subtask = {
         "project":
             {
-                "key": "KH01420231"
+                "key": jira_project_space
             },
         "parent":
             {
