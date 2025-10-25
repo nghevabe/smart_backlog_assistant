@@ -1,7 +1,12 @@
+from atlassian import Confluence
 from bs4 import BeautifulSoup
 import html
 import re
 from alllatsian.confluence.confluence_service_handle import confluence
+from extracter.handle_toc import extract_confluence_toc_string_from_html
+from utils import constant
+from urllib.parse import unquote
+from pathlib import Path
 
 
 def get_page_id(url):
@@ -11,20 +16,50 @@ def get_page_id(url):
     return int(match_id[0])
 
 
-def content_extraction(id_page):
-    contents = confluence.get_page_by_id(
-        id_page,
+def get_spaces_id(url):
+    id_regex = r'/spaces/(.*)/pages'
+    match_id = re.findall(id_regex, url)
+    print("ZZZ_spaces_id")
+    print(match_id)
+    return str(match_id[0])
+
+
+def content_extraction(url):
+    constant.confluence_namespace = get_spaces_id(url)
+
+    conflu = Confluence(
+        url=constant.alllatsian_id_namespace + '/wiki/',
+        username=constant.alllatsian_username,
+        password=constant.jira_api_token,
+        cloud=True)
+
+    contents = conflu.get_page_by_id(
+        get_page_id(url),
         expand="body.storage,version",
+        status="current"
+    )
+
+    contents_view = conflu.get_page_by_id(
+        get_page_id(url),
+        expand="body.export_view,version",
         status="current"
     )
 
     page_content = contents['body']
     html_content = page_content['storage']['value']
+    html_view = contents_view["body"]["export_view"]["value"]
 
+    toc_value = extract_confluence_toc_string_from_html(
+        html_view,
+        min_level=1,
+        max_level=4,
+        include_outline_prefix=True
+    )
+    print(toc_value)
     decoded_content = html.unescape(html_content)
     table = decoded_content.split("<tbody>")
     for item in table:
-        if "Quy tắc nghiệp vụ (nếu có)" in item:
+        if "Quy tắc nghiệp vụ" in item:
             soup = BeautifulSoup(item, "html.parser")
             # Tìm tất cả tag có tên bắt đầu bằng "ac:"
             for tag in soup.find_all(lambda t: t.name and t.name.startswith("ac:")):
@@ -43,9 +78,10 @@ def content_extraction(id_page):
 
 
 def scan_page_content(url):
+    print("ZZZ_print(constant.jira_project_space): "+str(constant.jira_project_space))
     print("url: ")
     print(url)
-    return content_extraction(get_page_id(url))
+    return content_extraction(url)
     # return content_extraction(get_page_id("https://bidv-ba-assistant317.atlassian.net/wiki/spaces/BAAI/pages/8028225/URD+CNR+VA+5.+BO_B+o+c+o+b+ng+k+kho+n+ph+i+thu"))
 
 
@@ -63,3 +99,4 @@ def parse_confluence_table(html_str: str):
         rows_data.append(col_texts)
 
     return rows_data
+

@@ -1,16 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, current_app
 
 import main
 from extracter import scaner
+from utils import system_init
 from data.data_app import lstUserStoryItem, lstUserStoryPreview, lstTaskItem, lstTaskItemPreview
 
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
+
+
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html", result=None)
+
+@app.route("/config_evironment", methods=["GET"])
+def get_config():
+    jira_project_space = request.args.get("jira_project_space")
+    system_init.init_config(jira_project_space)
+
+
+    return jsonify({
+        "jira_project_space": jira_project_space,
+    })
 
 @app.route("/get_fill_data", methods=["GET"])
 def get_fill_data():
@@ -72,6 +85,7 @@ def run_step():
 
     try:
         if step == 1:
+            print("DEBUG_ZZZ New Commit")
             main.create_lst_user_story_preview_step(epic, goal, desc)
             lst = lstUserStoryPreview
             # list of UserStoryItem → dict để gửi ra JSON

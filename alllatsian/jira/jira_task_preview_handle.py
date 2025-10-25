@@ -8,7 +8,7 @@ from utils import constant
 from utils.constant import model_config, user_config
 from utils.promts import promt_im_pmo_want_create_us, promt_create_content_subtask_feature, \
     promt_create_content_subtask_project
-
+from jira import JIRA
 client = OpenAI(api_key=constant.open_api_key)
 
 
@@ -42,7 +42,15 @@ acceptance criteria here
 
 
 def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc):
+    j = JIRA(server=constant.alllatsian_id_namespace,
+             basic_auth=(constant.alllatsian_username, constant.jira_api_token))
+    components = j.project_components("KH0012024")
 
+    print("Components in project KH0012024:")
+    for c in components:
+        print(f"- {c.name} (id={c.id})")
+
+    lstUserStoryPreview.clear()
     res = agent_gen_user_story(epic_name,
                                business_goal,
                                high_level_desc)
@@ -94,7 +102,6 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     print("lst_sub_task_title: "+str(len(lst_sub_task_title)))
     for i in range(len(lst_sub_task_title)):
         day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
-
         task_item = TaskItem(user_story_id=story_id, title=lst_sub_task_title[i], des=lst_sub_task_content[i],
                              team=lst_sub_task_team[i],
                              manday=day_number)
