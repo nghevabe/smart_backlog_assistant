@@ -1,7 +1,13 @@
+import os
+
 model_config = "gpt-4o-mini"
 user_config = "user"
-jira_api_token = 'jira_api_token'
-open_api_key = 'open_api_key'
+# jira_api_token = 'jira_api_token'
+# open_api_key = 'open_api_key'
+
+open_api_key = os.environ.get('OPENAI_API_KEY')
+jira_api_token = os.environ.get('ATLASSIAN_API_TOKEN')
+
 alllatsian_id_namespace = 'https://bidv-vn.atlassian.net'
 confluence_namespace = 'KH0012024'
 jira_project_space = 'KH01420231'
