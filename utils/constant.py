@@ -1,12 +1,28 @@
+import os
+
 model_config = "gpt-4o-mini"
 user_config = "user"
-jira_api_token = 'jira_api_token'
-open_api_key = 'open_api_key'
-alllatsian_id_namespace = 'https://bidv-vn.atlassian.net'
-confluence_namespace = 'KH0012024'
-jira_project_space = 'KH01420231'
-alllatsian_username = 'linhth8@bidv.com.vn'
 
+open_api_key = os.environ.get('OPENAI_API_KEY')
+jira_api_token = os.environ.get('ATLASSIAN_API_TOKEN')
+
+
+# POC BIDV
+# alllatsian_id_namespace = 'https://bidv-vn.atlassian.net'
+# confluence_namespace = 'KH0012024'
+# jira_project_space = 'KH01420231'
+# alllatsian_username = 'linhth8@bidv.com.vn'
+
+
+# POC Manual
+
+print("ZZZ_Set_Value")
+alllatsian_id_namespace = 'https://bidv-ba-assistant317.atlassian.net'
+confluence_namespace = 'BAAI'
+jira_project_space = 'SCRUM'
+alllatsian_username = 'tranhoanglinh317@gmail.com'
+
+appendix_content = ""
 
 html_source = """
 <!DOCTYPE html>

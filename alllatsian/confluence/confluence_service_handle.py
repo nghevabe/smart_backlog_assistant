@@ -2,6 +2,7 @@ import re
 from atlassian import Confluence
 
 from alllatsian.jira import jira_task_service_handle
+from utils import constant
 from utils.constant import jira_api_token, alllatsian_id_namespace, confluence_namespace, alllatsian_username
 from alllatsian.utils import genarate_plan, parser_content
 from data.data_app import lstTaskItem, lstUserStoryItem
@@ -14,16 +15,22 @@ confluence = Confluence(
 
 
 def agent_gen_estimate_doc(promt):
-    status = confluence.create_page(
-        space=confluence_namespace,
-        title='Page Gen Planning',
+    conflu = Confluence(
+        url=constant.alllatsian_id_namespace + '/wiki/',
+        username=constant.alllatsian_username,
+        password=constant.jira_api_token,
+        cloud=True)
+
+    status = conflu.create_page(
+        space=constant.confluence_namespace,
+        title='Page Gen Planning 02',
         body=promt
     )
 
     s = str(status.get('_links'))
     regex = r"'webui': '(.*)', 'edituiv2'"
     match = re.findall(regex, s)
-    parser_content.url_est_doc_full = alllatsian_id_namespace + '/wiki' + match[0]
+    parser_content.url_est_doc_full = constant.alllatsian_id_namespace + '/wiki' + match[0]
     print(parser_content.url_est_doc_full)
 
     jira_task_service_handle.attach_link_confluence_to_task()

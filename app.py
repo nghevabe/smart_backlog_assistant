@@ -1,16 +1,40 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, current_app
 
 import main
+from data import data_app
 from extracter import scaner
+from utils import system_init, constant
 from data.data_app import lstUserStoryItem, lstUserStoryPreview, lstTaskItem, lstTaskItemPreview
 
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
+
+
 @app.route("/", methods=["GET"])
 def index():
+    data_app.lstUserStoryItem = []
+    data_app.lstTaskItem = []
+    data_app.lstUserStoryPreview = []
+    data_app.lstTaskItemPreview = []
+
+    constant.alllatsian_id_namespace = 'https://bidv-ba-assistant317.atlassian.net'
+    constant.confluence_namespace = 'BAAI'
+    constant.jira_project_space = 'SCRUM'
+    constant.alllatsian_username = 'tranhoanglinh317@gmail.com'
+    constant.appendix_content = ""
     return render_template("index.html", result=None)
+
+@app.route("/config_evironment", methods=["GET"])
+def get_config():
+    jira_project_space = request.args.get("jira_project_space")
+    system_init.init_config(jira_project_space)
+
+
+    return jsonify({
+        "jira_project_space": jira_project_space,
+    })
 
 @app.route("/get_fill_data", methods=["GET"])
 def get_fill_data():
@@ -72,6 +96,7 @@ def run_step():
 
     try:
         if step == 1:
+            print("DEBUG_ZZZ New Commit")
             main.create_lst_user_story_preview_step(epic, goal, desc)
             lst = lstUserStoryPreview
             # list of UserStoryItem → dict để gửi ra JSON
