@@ -3,7 +3,7 @@ from atlassian import Confluence
 
 from alllatsian.jira import jira_task_service_handle
 from utils import constant
-from utils.constant import jira_api_token, alllatsian_id_namespace, confluence_namespace, alllatsian_username
+from utils.constant import jira_api_token, alllatsian_id_namespace, alllatsian_username
 from alllatsian.utils import genarate_plan, parser_content
 from data.data_app import lstTaskItem, lstUserStoryItem
 
@@ -22,7 +22,7 @@ def agent_gen_estimate_doc(promt):
         cloud=True)
 
     status = conflu.create_page(
-        space=constant.confluence_namespace,
+        space="PS0022023",
         title='Page Gen Planning 02',
         body=promt
     )
