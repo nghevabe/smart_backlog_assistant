@@ -56,6 +56,7 @@ def content_extraction(url):
         include_outline_prefix=True
     )
     print(toc_value)
+    constant.appendix_content = toc_value
     decoded_content = html.unescape(html_content)
     table = decoded_content.split("<tbody>")
     for item in table:

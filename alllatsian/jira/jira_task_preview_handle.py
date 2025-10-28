@@ -13,7 +13,13 @@ client = OpenAI(api_key=constant.open_api_key)
 
 
 def agent_gen_user_story(epic_name, business_goal, high_level_desc):
-    promt = f"""Tôi là 1 BA, hãy tự sinh ra từ 2 hoặc 3 User Story tuỳ thuộc vào nội dung và phải theo chuẩn Agile.
+    promt = f"""Tôi là 1 BA, hãy tự sinh ra các User Story. 
+    Hãy dựa vào nội dung trong Mục Lục sau {constant.appendix_content} để xác định số lượng User Story. 
+    Mỗi màn hình tương ứng 1 User Story và phải theo chuẩn Agile.
+    Có thể có Mục Lục chỉ có 1 Màn Hình duy nhất thì chỉ cần tạo 1 User Story.
+    Cách nhận biết Mục Lục có nhiều màn hình hay không phải dựa vào cây cấu trúc ở phần Mục Lục trên.
+    Nếu nhánh level 1 không có mục 'Mô tả màn hình' thì nó sẽ chỉ có 1 màn hình duy nhất. Hãy lưu ý và cần thận điều này
+    Trường hơp nội dung Mục Lục rỗng thì tự dựa vào các thông tin bên dưới để tạo User Story.
 Đây là các thông tin tôi cũng cấp:
 - Epic Name: {epic_name}
 - Business Goal: {business_goal}

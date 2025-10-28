@@ -22,6 +22,7 @@ confluence_namespace = 'BAAI'
 jira_project_space = 'SCRUM'
 alllatsian_username = 'tranhoanglinh317@gmail.com'
 
+appendix_content = ""
 
 html_source = """
 <!DOCTYPE html>

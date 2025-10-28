@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, current_app
 
 import main
+from data import data_app
 from extracter import scaner
-from utils import system_init
+from utils import system_init, constant
 from data.data_app import lstUserStoryItem, lstUserStoryPreview, lstTaskItem, lstTaskItemPreview
 
 
@@ -13,6 +14,16 @@ app.secret_key = "dev-secret-key"
 
 @app.route("/", methods=["GET"])
 def index():
+    data_app.lstUserStoryItem = []
+    data_app.lstTaskItem = []
+    data_app.lstUserStoryPreview = []
+    data_app.lstTaskItemPreview = []
+
+    constant.alllatsian_id_namespace = 'https://bidv-ba-assistant317.atlassian.net'
+    constant.confluence_namespace = 'BAAI'
+    constant.jira_project_space = 'SCRUM'
+    constant.alllatsian_username = 'tranhoanglinh317@gmail.com'
+    constant.appendix_content = ""
     return render_template("index.html", result=None)
 
 @app.route("/config_evironment", methods=["GET"])
