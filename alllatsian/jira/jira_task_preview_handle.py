@@ -47,6 +47,35 @@ acceptance criteria here
     return completion.choices[0].message.content
 
 
+def agent_gen_user_story_cmmi():
+    promt = f"""
+    Tôi là 1 BA, Tôi đang cần phân rã chức năng để tạo User Story dựa vào nội dung URD chuẩn CMMI.
+     Sau đây là nội dung tôi đã crawl được: {constant.content_cmmi_5}
+     . Hãy xác định số lượng Màn Hình trong URD và tạo ra số lượng User Story tương ứng với số lượng màn hình. 
+Output sẽ theo form như sau:
+#begin_response#
+Title: #tit_start#title here#tit_end#
+Description: #des_start#description here#des_end#
+Acceptance Criteria:
+#start#
+acceptance criteria here
+#end#
+"""
+
+    completion = client.chat.completions.create(
+        model=model_config,
+        messages=[
+            {"role": user_config,
+             "content": promt
+             }
+        ]
+    )
+    # print(completion.choices[0].message.content)
+    return completion.choices[0].message.content
+
+
+
+
 def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc):
     j = JIRA(server=constant.alllatsian_id_namespace,
              basic_auth=(constant.alllatsian_username, constant.jira_api_token))
@@ -57,9 +86,12 @@ def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc
         print(f"- {c.name} (id={c.id})")
 
     lstUserStoryPreview.clear()
-    res = agent_gen_user_story(epic_name,
-                               business_goal,
-                               high_level_desc)
+    # res = agent_gen_user_story(epic_name, business_goal, high_level_desc)
+    if constant.content_cmmi_5 != "none":
+        res = agent_gen_user_story_cmmi()
+    else:
+        res = agent_gen_user_story(epic_name, business_goal, high_level_desc)
+
     lst_story = res.split("#begin_response#")
 
     for story in lst_story:
