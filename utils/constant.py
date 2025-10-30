@@ -6,6 +6,7 @@ user_config = "user"
 open_api_key = os.environ.get('OPENAI_API_KEY')
 jira_api_token = os.environ.get('ATLASSIAN_API_TOKEN')
 
+
 # POC BIDV
 # alllatsian_id_namespace = 'https://bidv-vn.atlassian.net'
 # confluence_namespace = 'KH0012024'
@@ -22,6 +23,8 @@ jira_project_space = 'SCRUM'
 alllatsian_username = 'tranhoanglinh317@gmail.com'
 
 appendix_content = ""
+
+content_cmmi_5 = "none"
 
 html_source = """
 <!DOCTYPE html>

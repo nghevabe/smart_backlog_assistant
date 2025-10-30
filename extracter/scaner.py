@@ -4,6 +4,7 @@ import html
 import re
 from alllatsian.confluence.confluence_service_handle import confluence
 from extracter.handle_toc import extract_confluence_toc_string_from_html
+from handle_format import normalize_urd_text
 from utils import constant
 from urllib.parse import unquote
 from pathlib import Path
@@ -22,6 +23,50 @@ def get_spaces_id(url):
     print("ZZZ_spaces_id")
     print(match_id)
     return str(match_id[0])
+
+
+def get_title_cmmi(source):
+    pattern = re.compile(
+        r"Chức\s*năng\s*trọng\s*tâm\s*:\s*(.*?)\s*(?=\bPhiên\s*bản\s*:)",
+        flags=re.IGNORECASE,
+    )
+
+    match = pattern.search(source)
+    if match:
+        focus_function = match.group(1).strip()
+        return focus_function
+    else:
+        print("⚠️ Không tìm thấy phần 'Chức năng trọng tâm:' trong tài liệu.")
+
+
+def get_des_cmmi(source: str) -> str | None:
+
+    return """Cung cấp chức năng tạo và quản lý mã thỏa thuận tỷ giá phục vụ các phân hệ giao dịch có liên quan trên iBank/FX.
+
+FX Hub được tham chiếu để kiểm tra biên độ/tỷ giá niêm yết và các cảnh báo khi đẩy duyệt mã thỏa thuận."""
+
+
+def get_expect_cmmi(source):
+    return "Kết Quả Mong Muốn không được đề cập"
+
+
+def handle_cmmi(source):
+    print("ZZZ_cmmi_5")
+    # with open("output1.txt", "w", encoding="utf-8") as f:
+    #     f.write(source)
+
+    # 2. Parse bằng BeautifulSoup
+    soup = BeautifulSoup(source, "html.parser")
+
+    # 3. Lấy toàn bộ text (tự loại thẻ)
+    text_only = soup.get_text(separator="\n", strip=True)
+
+    return get_title_cmmi(text_only), get_des_cmmi(text_only), get_expect_cmmi(text_only), text_only
+
+    # # 4. Ghi ra file mới
+    # Path("text_only_output_2.txt").write_text(normalize_urd_text(text_only), encoding="utf-8")
+    #
+    # print("✅ Đã ghi nội dung vào file output.txt")
 
 
 def content_extraction(url):
@@ -47,6 +92,11 @@ def content_extraction(url):
 
     page_content = contents['body']
     html_content = page_content['storage']['value']
+    if 'CMMI-5' in str(html_content):
+        name, des, result, constant.content_cmmi_5 = handle_cmmi(html_content)
+        return name, result, des
+
+    print("ZZZ_Normal Format")
     html_view = contents_view["body"]["export_view"]["value"]
 
     toc_value = extract_confluence_toc_string_from_html(
@@ -79,7 +129,7 @@ def content_extraction(url):
 
 
 def scan_page_content(url):
-    print("ZZZ_print(constant.jira_project_space): "+str(constant.jira_project_space))
+    print("ZZZ_print(constant.jira_project_space): " + str(constant.jira_project_space))
     print("url: ")
     print(url)
     return content_extraction(url)
@@ -100,4 +150,3 @@ def parse_confluence_table(html_str: str):
         rows_data.append(col_texts)
 
     return rows_data
-
