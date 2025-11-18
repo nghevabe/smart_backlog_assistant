@@ -8,16 +8,17 @@
         body{
                font-family: Arial, sans-serif;
                background: url("{{ url_for('static', filename='bg_bidv.png') }}") no-repeat center center fixed;
-               background-size: cover; /* ảnh phủ toàn màn hình */
+               background-size: cover;
                padding:24px;
              }
              .card{
                max-width:720px;
-               margin: 100px auto 0 auto; /* trên 100px, trái phải auto, dưới 0 */
-               background:rgba(255,255,255,1.0); /* nền trắng hơi trong suốt */
+               margin: 100px auto 0 auto;
+               background:rgba(255,255,255,1.0);
                padding:32px;
                border-radius:12px;
                box-shadow:0 6px 18px rgba(0,0,0,0.1);
+               position: relative;
              }
              h2{
                text-align:center;
@@ -35,18 +36,8 @@
                padding:10px;
                border-radius:6px;
                border:1px solid #ddd;
-               margin-top:6px
+               margin-top:6px;
              }
-             .hint{
-               color:#9C9C9C;
-               font-size:13px;
-               margin-top:4px;
-               margin-bottom:8px;
-               font-style:italic;
-             }
-             .radio-group{margin-top:12px}
-             .radio-group span{color:#444}
-             .radio-group label{font-weight:400; margin-right:16px; color:#333}
              .btn-container{text-align:center;margin-top:16px}
              button{
                padding:12px 24px;
@@ -61,79 +52,79 @@
              }
              button:hover{background:#004a99}
              .small-btn {
-           padding:10px 12px;
-           border-radius:6px;
-           border:none;
-           background:#005C59;
-           color:#fff;
-           cursor:pointer;
-           font-size:13px;
-           font-weight:600;
-           transition:background 0.2s ease;
-         }
-         .small-btn:hover {
-           background:#004a99;
-         }
-             pre{
-               background:#f7f9fc;
-               padding:16px;
-               border-radius:8px;
-               border:1px solid #eee;
-               white-space:pre-wrap;
-               word-wrap:break-word;
-               color:#0a3d62;
-               font-size:14px;
+                 padding:10px 12px;
+                 border-radius:6px;
+                 border:none;
+                 background:#005C59;
+                 color:#fff;
+                 cursor:pointer;
+                 font-size:13px;
+                 font-weight:600;
+                 transition:background 0.2s ease;
              }
-             .flash{
-               padding:10px;
-               border-radius:6px;
-               margin-bottom:12px
-             }
-             .error{
-               background:#ffe7e7;
-               border:1px solid #f5b4b4;
-               color:#8a1b1b
-             }
-             .info{
-               background:#e8f3ff;
-               border:1px solid #bcd7ff;
-               color:#034a8b
-             }
+             .small-btn:hover { background:#004a99; }
+
              input::placeholder,
              textarea::placeholder {
-                 color: #9EABAD;   /* màu tím */
-                 font-style: italic; /* cho placeholder nghiêng nhẹ */
-                 opacity: 1;        /* đảm bảo màu không bị nhạt */
+                 color: #9EABAD;
+                 font-style: italic;
+                 opacity: 1;
+             }
+
+             /* Nút logout */
+             .logout-bar {
+                 position: absolute;
+                 top: 12px;
+                 right: 12px;
+             }
+             .logout-btn {
+                 background:#d9534f;
+                 color:white;
+                 padding:6px 12px;
+                 border-radius:6px;
+                 border:none;
+                 font-size:13px;
+                 cursor:pointer;
+                 font-weight:600;
+             }
+             .logout-btn:hover{
+                 background:#c9302c;
              }
     </style>
 </head>
 <body>
 
-
 <div class="card">
-    <!-- Title vào trong card -->
+
+    <!-- Nút logout -->
+    <div class="logout-bar">
+        <button class="logout-btn" onclick="window.location.href='/logout'">Đăng xuất</button>
+    </div>
+
+    <!-- Title -->
     <h2>Auto Backlog and Planning</h2>
 
     <form id="epicForm" action="{{ url_for('processing') }}" method="post">
 
-        <label for="url_doc" style="display:block; font-weight:600; color:#171F21;">URL Doc</label>
+        <label for="url_doc">URL Doc</label>
         <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-            <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}" required style="flex:1;"
-                   placeholder="Dán đường dẫn Confluence của tài liệu vào đây để quét và trích xuất yêu cầu tự động"/>
+            <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}"
+                   required style="flex:1;"
+                   placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
             <button type="button" class="small-btn" onclick="fillFromServer()">Quét</button>
         </div>
 
         <label for="epic_name">Epic Name</label>
         <input id="epic_name" name="epic_name" type="text" value="{{ epic|default('') }}" required
-               placeholder="Nhập tên của chức năng/dự án (ví dụ: Quản lý tài chính cá nhân)"/>
+               placeholder="Nhập tên chức năng/dự án (VD: Quản lý tài chính cá nhân)"/>
 
         <label for="business_goal">Business Goal</label>
         <input id="business_goal" name="business_goal" type="text" value="{{ goal|default('') }}"
-               placeholder="Mục tiêu (ví dụ: Giúp cho người dùng có thể kiểm soát được dòng tiền thu, chi của bản thân)"/>
+               placeholder="Mục tiêu của dự án"/>
 
         <label for="high_level_desc">High-level Description</label>
-        <textarea id="high_level_desc" name="high_level_desc" rows="4" placeholder="Mô tả ngắn gọn (ví dụ: Ứng dụng bao gồm các tính năng ghi chép thu chi, thống kê, báo cáo chi
-            tiêu, có cả trên Web và Mobile)">{{ desc|default('') }}</textarea>
+        <textarea id="high_level_desc" name="high_level_desc" rows="4"
+                  placeholder="Mô tả ngắn gọn về tính năng...">{{ desc|default('') }}</textarea>
 
         <div style="width:100%;" class="btn-container">
             <button style="width:100%;" type="submit">Xử Lý</button>
@@ -143,9 +134,8 @@
 
 <script>
     async function fillFromServer() {
-      // Lấy giá trị từ url_doc
       const urlDoc = document.getElementById("url_doc").value;
-      var link_request = '/get_fill_data?doc=' + encodeURIComponent(urlDoc)
+      const link_request = '/get_fill_data?doc=' + encodeURIComponent(urlDoc)
       const res = await fetch(link_request);
       const data = await res.json();
       document.getElementById("epic_name").value = data.epic_name;
@@ -153,5 +143,6 @@
       document.getElementById("high_level_desc").value = data.high_level_desc;
     }
 </script>
+
 </body>
 </html>

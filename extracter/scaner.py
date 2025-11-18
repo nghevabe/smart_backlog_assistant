@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import html
 import re
-from alllatsian.confluence.confluence_service_handle import confluence
+from utils.config import get_confluence
 
 
 def get_page_id(url):
@@ -12,7 +12,7 @@ def get_page_id(url):
 
 
 def content_extraction(id_page):
-    contents = confluence.get_page_by_id(
+    contents = get_confluence().get_page_by_id(
         id_page,
         expand="body.storage,version",
         status="current"
