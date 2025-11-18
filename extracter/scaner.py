@@ -78,6 +78,9 @@ def content_extraction(url):
         password=constant.jira_api_token,
         cloud=True)
 
+    print("XXX_constant.alllatsian_id_namespace: "+constant.alllatsian_id_namespace)
+    print("XXX_constant.alllatsian_username: "+constant.alllatsian_username)
+
     contents = conflu.get_page_by_id(
         get_page_id(url),
         expand="body.storage,version",

@@ -29,7 +29,8 @@ def index():
 @app.route("/config_evironment", methods=["GET"])
 def get_config():
     jira_project_space = request.args.get("jira_project_space")
-    system_init.init_config(jira_project_space)
+    # system_init.init_config(jira_project_space)
+    system_init.init_config_cmmi(jira_project_space)
 
 
     return jsonify({

@@ -41,8 +41,8 @@ def create_user_story_item(user_story_item):
         'duedate': due_date,
 
         # For BIDV
-        'customfield_10035': start_date,
-        'assignee': {'id': None}
+        # 'customfield_10035': start_date,
+        # 'assignee': {'id': None}
     }
 
     # Create the issue
@@ -104,8 +104,8 @@ def create_sub_task(parent_id, title, content, estimate, team):
         "description": content,
         "issuetype":
             {
-                "name": "Sub-task"
-                # "name": "Subtask"
+                # "name": "Sub-task"
+                "name": "Subtask"
             },
         "timetracking": {
             "originalEstimate": estimate + "d"
@@ -113,10 +113,10 @@ def create_sub_task(parent_id, title, content, estimate, team):
         "duedate": due_date,
 
         # For BIDV
-        "customfield_10035": start_date,
-        "components": [{"id": component_id}],
-        "customfield_10084": {"value": work_type},
-        "assignee": {"id": "63f42db8263233e653a8e69f"}
+        # "customfield_10035": start_date,
+        # "components": [{"id": component_id}],
+        # "customfield_10084": {"value": work_type},
+        # "assignee": {"id": "63f42db8263233e653a8e69f"}
         # 'assignee': {'id': None}
     }
 

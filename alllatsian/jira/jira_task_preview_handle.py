@@ -79,11 +79,6 @@ acceptance criteria here
 def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc):
     j = JIRA(server=constant.alllatsian_id_namespace,
              basic_auth=(constant.alllatsian_username, constant.jira_api_token))
-    components = j.project_components("KH0012024")
-
-    print("Components in project KH0012024:")
-    for c in components:
-        print(f"- {c.name} (id={c.id})")
 
     lstUserStoryPreview.clear()
     # res = agent_gen_user_story(epic_name, business_goal, high_level_desc)
