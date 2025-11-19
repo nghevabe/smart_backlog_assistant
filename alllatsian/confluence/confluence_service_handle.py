@@ -2,13 +2,13 @@ import re
 from alllatsian.jira import jira_task_service_handle
 from alllatsian.utils import genarate_plan, parser_content
 from data.data_app import lstTaskItem, lstUserStoryItem
-from utils.config import get_confluence
+from utils.config import confluence_config
 
 
 def agent_gen_estimate_doc(promt):
-    status = get_confluence().create_page(
+    status = confluence_config().create_page(
         space='BAAI',
-        title='Page Gen 15',
+        title='Page Gen 16',
         body=promt
     )
 

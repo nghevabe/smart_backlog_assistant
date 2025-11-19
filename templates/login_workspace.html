@@ -40,8 +40,8 @@
     <h3>Cấu Hình Jira</h3>
 
     <!-- Jira Namespace -->
-    <label for="jira_namespace">Jira Workspace (Namespace)</label>
-    <input type="text" id="jira_namespace" placeholder="https://xxx.atlassian.net">
+    <label for="atlassian_namespace">Jira Workspace (Namespace)</label>
+    <input type="text" id="atlassian_namespace" placeholder="https://xxx.atlassian.net">
 
     <button style="margin-top:10px;" onclick="checkWorkspace()">Kiểm Tra Workspace</button>
 
@@ -49,19 +49,19 @@
     <div id="check-result"></div>
 
     <!-- Email -->
-    <label for="jira_email">Email Atlassian</label>
-    <input type="email" id="jira_email" placeholder="ví dụ: linhth8@bidv.com.vn">
+    <label for="atlassian_user">Email Atlassian</label>
+    <input type="email" id="atlassian_user" placeholder="ví dụ: linhth8@bidv.com.vn">
 
     <!-- Token -->
-    <label for="jira_api_token">API Token</label>
-    <input type="password" id="jira_api_token" placeholder="Dán API Token vào đây">
+    <label for="atlassian_api_token">API Token</label>
+    <input type="password" id="atlassian_api_token" placeholder="Dán API Token vào đây">
 
     <button style="margin-top:16px; width:100%;" onclick="saveConfig()">Lưu Cấu Hình</button>
 </div>
 
 <script>
 async function checkWorkspace() {
-    const ns = document.getElementById("jira_namespace").value.trim();
+    const ns = document.getElementById("atlassian_namespace").value.trim();
     const resultBox = document.getElementById("check-result");
 
     if (!ns) {
@@ -86,9 +86,9 @@ async function checkWorkspace() {
 }
 
 async function saveConfig() {
-    const ns = document.getElementById("jira_namespace").value.trim();
-    const email = document.getElementById("jira_email").value.trim();
-    const token = document.getElementById("jira_api_token").value.trim();
+    const ns = document.getElementById("atlassian_namespace").value.trim();
+    const email = document.getElementById("atlassian_user").value.trim();
+    const token = document.getElementById("atlassian_api_token").value.trim();
 
     const body = { namespace: ns, email: email, token: token };
 

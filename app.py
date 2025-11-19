@@ -27,7 +27,7 @@ def config_jira():
 @app.route("/", methods=["GET"])
 def index():
     # Nếu chưa login Jira → yêu cầu nhập namespace/email/token
-    if "jira_namespace" not in session or "jira_email" not in session or "jira_api_token" not in session:
+    if "atlassian_namespace" not in session or "atlassian_user" not in session or "atlassian_api_token" not in session:
         return redirect(url_for("config_jira"))
 
     # Nếu đã có session → vào trang chính
@@ -59,9 +59,9 @@ def check_namespace():
 def save_jira_config():
     data = request.json
 
-    session["jira_namespace"] = data["namespace"]
-    session["jira_email"] = data["email"]
-    session["jira_api_token"] = data["token"]
+    session["atlassian_namespace"] = data["namespace"]
+    session["atlassian_user"] = data["email"]
+    session["atlassian_api_token"] = data["token"]
 
     return {"ok": True, "message": "Đã lưu cấu hình Jira!"}
 
