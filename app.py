@@ -1,16 +1,70 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+import requests
+from flask import Flask, render_template, redirect, url_for, session
 
-import main
+from alllatsian.confluence.confluence_service_handle import create_table_est_for_doc_step
+from alllatsian.jira.jira_task_controller import create_lst_task_preview_step
+from alllatsian.jira.jira_task_preview_handle import create_lst_user_story_preview_step
+from alllatsian.jira.jira_task_service_handle import create_list_user_story_jira_step, create_task_jira_step
 from extracter import scaner
-from data.data_app import lstUserStoryItem, lstUserStoryPreview, lstTaskItem, lstTaskItemPreview
+from data.data_app import lstUserStoryPreview, lstTaskItemPreview
 
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/config_jira")
+
+
+@app.route("/config_jira")
+def config_jira():
+    return render_template("login_workspace.html")
+
+
 @app.route("/", methods=["GET"])
 def index():
+    # Nếu chưa login Jira → yêu cầu nhập namespace/email/token
+    if "atlassian_namespace" not in session or "atlassian_user" not in session or "atlassian_api_token" not in session:
+        return redirect(url_for("config_jira"))
+
+    # Nếu đã có session → vào trang chính
     return render_template("index.html", result=None)
+
+
+@app.route("/check_namespace")
+def check_namespace():
+    ns = request.args.get("ns", "").strip()
+
+    if not ns.startswith("http"):
+        ns = "https://" + ns
+
+    if not ns.endswith(".atlassian.net"):
+        return {"ok": False, "message": "Domain phải có dạng *.atlassian.net"}
+
+    try:
+        r = requests.get(ns + "/rest/api/2/serverInfo", timeout=5)
+        if r.status_code == 200:
+            return {"ok": True}
+        else:
+            return {"ok": False, "message": "HTTP " + str(r.status_code)}
+
+    except Exception as e:
+        return {"ok": False, "message": str(e)}
+
+
+@app.route("/save_jira_config", methods=["POST"])
+def save_jira_config():
+    data = request.json
+
+    session["atlassian_namespace"] = data["namespace"]
+    session["atlassian_user"] = data["email"]
+    session["atlassian_api_token"] = data["token"]
+
+    return {"ok": True, "message": "Đã lưu cấu hình Jira!"}
+
 
 @app.route("/get_fill_data", methods=["GET"])
 def get_fill_data():
@@ -36,30 +90,6 @@ def processing():
         epic=epic, goal=goal, desc=desc, requirement=requirement
     )
 
-# API thực thi xử lý thật
-@app.route("/run_async", methods=["POST"])
-def run_async():
-    data = request.get_json(silent=True) or {}
-    epic = data.get("epic_name", "")
-    goal = data.get("business_goal", "")
-    desc = data.get("high_level_desc", "")
-    requirement = data.get("requirement_type", "")
-
-    try:
-        # Gọi xử lý chính
-        result = main.main_app(epic, goal, desc, requirement)
-
-        # Trả về JSON có cả status và nội dung
-        return jsonify({
-            "status": "success",
-            "result": result
-        })
-    except Exception as e:
-        return jsonify({
-            "status": "error",
-            "result": f"Lỗi: {e}"
-        }), 500
-
 
 @app.route("/run_step", methods=["POST"])
 def run_step():
@@ -72,7 +102,7 @@ def run_step():
 
     try:
         if step == 1:
-            main.create_lst_user_story_preview_step(epic, goal, desc)
+            create_lst_user_story_preview_step(epic, goal, desc)
             lst = lstUserStoryPreview
             # list of UserStoryItem → dict để gửi ra JSON
             result = [
@@ -82,11 +112,11 @@ def run_step():
             return jsonify({"status": "success", "result": result, "step": 1})
 
         elif step == 2:
-            main.create_list_user_story_jira_step()
+            create_list_user_story_jira_step()
             return jsonify({"status": "success", "result": [], "step": 2})
 
         elif step == 3:
-            main.create_lst_task_preview_step("0")
+            create_lst_task_preview_step("0")
             lst = lstTaskItemPreview
 
             result = [
@@ -96,11 +126,11 @@ def run_step():
             return jsonify({"status": "success", "result": result, "step": 3})
         # ... Step 4–5 tương tự ...
         elif step == 4:
-            main.create_task_jira_step()
+            create_task_jira_step()
             return jsonify({"status": "success", "result": [], "step": 4})
         # ... Step 5 tương tự ...
         elif step == 5:
-            main.create_table_est_for_doc_step()
+            create_table_est_for_doc_step()
             return jsonify({"status": "success", "result": [], "step": 5})
         else:
             return jsonify({"status": "error", "message": "Invalid step"}), 400

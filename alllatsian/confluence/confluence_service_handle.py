@@ -1,22 +1,14 @@
 import re
-from atlassian import Confluence
-
 from alllatsian.jira import jira_task_service_handle
-from utils.constant import jira_api_token
 from alllatsian.utils import genarate_plan, parser_content
 from data.data_app import lstTaskItem, lstUserStoryItem
-
-confluence = Confluence(
-    url='https://bidv-ba-assistant317.atlassian.net/wiki',
-    username="tranhoanglinh317@gmail.com",
-    password=jira_api_token,
-    cloud=True)
+from utils.config import confluence_config
 
 
 def agent_gen_estimate_doc(promt):
-    status = confluence.create_page(
+    status = confluence_config().create_page(
         space='BAAI',
-        title='Page Gen 15',
+        title='Page Gen 16',
         body=promt
     )
 

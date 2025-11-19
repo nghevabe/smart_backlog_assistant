@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Cấu Hình Jira Workspace</title>
+    <style>
+        body {
+            font-family: Arial;
+            background:#f2f2f2;
+            padding:32px;
+        }
+        .card {
+            max-width:480px;
+            margin:auto;
+            background:white;
+            padding:24px;
+            border-radius:10px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+        }
+        label { font-weight:600; margin-top:16px; display:block; }
+        input {
+            width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;
+            margin-top:6px;
+        }
+        button {
+            padding:10px 16px; border:none; background:#005C59; color:white;
+            border-radius:6px; cursor:pointer; font-weight:600;
+        }
+        button:hover { background:#004a99; }
+        #check-result {
+            margin-top:12px; padding:10px; border-radius:6px; display:none;
+        }
+        .success { background:#e6ffed; border:1px solid #3bb54a; color:#1e7e34; }
+        .error { background:#ffe7e7; border:1px solid #f5b4b4; color:#8a1b1b; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h3>Cấu Hình Jira</h3>
+
+    <!-- Jira Namespace -->
+    <label for="atlassian_namespace">Jira Workspace (Namespace)</label>
+    <input type="text" id="atlassian_namespace" placeholder="https://xxx.atlassian.net">
+
+    <button style="margin-top:10px;" onclick="checkWorkspace()">Kiểm Tra Workspace</button>
+
+    <!-- Kết quả kiểm tra -->
+    <div id="check-result"></div>
+
+    <!-- Email -->
+    <label for="atlassian_user">Email Atlassian</label>
+    <input type="email" id="atlassian_user" placeholder="ví dụ: linhth8@bidv.com.vn">
+
+    <!-- Token -->
+    <label for="atlassian_api_token">API Token</label>
+    <input type="password" id="atlassian_api_token" placeholder="Dán API Token vào đây">
+
+    <button style="margin-top:16px; width:100%;" onclick="saveConfig()">Lưu Cấu Hình</button>
+</div>
+
+<script>
+async function checkWorkspace() {
+    const ns = document.getElementById("atlassian_namespace").value.trim();
+    const resultBox = document.getElementById("check-result");
+
+    if (!ns) {
+        resultBox.style.display = "block";
+        resultBox.className = "error";
+        resultBox.innerText = "Vui lòng nhập workspace!";
+        return;
+    }
+
+    const response = await fetch("/check_namespace?ns=" + encodeURIComponent(ns));
+    const data = await response.json();
+
+    resultBox.style.display = "block";
+
+    if (data.ok) {
+        resultBox.className = "success";
+        resultBox.innerText = "✔ Workspace hợp lệ!";
+    } else {
+        resultBox.className = "error";
+        resultBox.innerText = "❌ Không kết nối được: " + data.message;
+    }
+}
+
+async function saveConfig() {
+    const ns = document.getElementById("atlassian_namespace").value.trim();
+    const email = document.getElementById("atlassian_user").value.trim();
+    const token = document.getElementById("atlassian_api_token").value.trim();
+
+    const body = { namespace: ns, email: email, token: token };
+
+    const response = await fetch("/save_jira_config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+
+    const data = await response.json();
+    alert(data.message);
+
+    if (data.ok) window.location.href = "/";
+}
+</script>
+
+</body>
+</html>

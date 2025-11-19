@@ -1,8 +1,6 @@
 model_config = "gpt-4o-mini"
 user_config = "user"
-jira_api_token = 'jira_api_token'
 open_api_key = 'open_api_key'
-
 
 html_source = """
 <!DOCTYPE html>
