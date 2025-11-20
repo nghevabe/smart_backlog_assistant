@@ -6,32 +6,72 @@
     <style>
         body {
             font-family: Arial;
-            background:#f2f2f2;
             padding:32px;
+            background: url("{{ url_for('static', filename='bg_bidv.png') }}")
+                        no-repeat center center fixed;
+            background-size: cover;
         }
+
         .card {
             max-width:480px;
-            margin:auto;
-            background:white;
+            margin:120px auto 0 auto;
+            background: rgba(255,255,255,0.95);
             padding:24px;
-            border-radius:10px;
-            box-shadow:0 4px 12px rgba(0,0,0,0.1);
+            border-radius:12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.15);
         }
-        label { font-weight:600; margin-top:16px; display:block; }
+
+        h3 {
+            text-align:center;
+            margin-bottom:16px;
+            color:#171F21;
+        }
+
+        label {
+            font-weight:600;
+            margin-top:16px;
+            display:block;
+            color:#171F21;
+        }
+
         input {
-            width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;
+            width:100%;
+            padding:10px;
+            border-radius:6px;
+            border:1px solid #ccc;
             margin-top:6px;
         }
+
         button {
-            padding:10px 16px; border:none; background:#005C59; color:white;
-            border-radius:6px; cursor:pointer; font-weight:600;
+            padding:10px 16px;
+            border:none;
+            background:#005C59;
+            color:white;
+            border-radius:6px;
+            cursor:pointer;
+            font-weight:600;
         }
-        button:hover { background:#004a99; }
+        button:hover {
+            background:#004a99;
+        }
+
         #check-result {
-            margin-top:12px; padding:10px; border-radius:6px; display:none;
+            margin-top:12px;
+            padding:10px;
+            border-radius:6px;
+            display:none;
         }
-        .success { background:#e6ffed; border:1px solid #3bb54a; color:#1e7e34; }
-        .error { background:#ffe7e7; border:1px solid #f5b4b4; color:#8a1b1b; }
+
+        .success {
+            background:#e6ffed;
+            border:1px solid #3bb54a;
+            color:#1e7e34;
+        }
+        .error {
+            background:#ffe7e7;
+            border:1px solid #f5b4b4;
+            color:#8a1b1b;
+        }
     </style>
 </head>
 <body>
@@ -40,7 +80,7 @@
     <h3>Cấu Hình Jira</h3>
 
     <!-- Jira Namespace -->
-    <label for="atlassian_namespace">Jira Workspace (Namespace)</label>
+    <label for="atlassian_namespace">Workspace (Namespace)</label>
     <input type="text" id="atlassian_namespace" placeholder="https://xxx.atlassian.net">
 
     <button style="margin-top:10px;" onclick="checkWorkspace()">Kiểm Tra Workspace</button>
