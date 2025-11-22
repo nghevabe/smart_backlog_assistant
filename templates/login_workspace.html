@@ -72,6 +72,12 @@
             border:1px solid #f5b4b4;
             color:#8a1b1b;
         }
+
+        .checking {
+            background:#fff4cc;
+            border:1px solid #ffe58f;
+            color:#8a6d1b;
+        }
     </style>
 </head>
 <body>
@@ -81,9 +87,9 @@
 
     <!-- Jira Namespace -->
     <label for="atlassian_namespace">Workspace (Namespace)</label>
-    <input type="text" id="atlassian_namespace" placeholder="https://xxx.atlassian.net">
-
-    <button style="margin-top:10px;" onclick="checkWorkspace()">Kiểm Tra Workspace</button>
+    <input type="text" id="atlassian_namespace"
+           placeholder="https://xxx.atlassian.net"
+           oninput="debounceCheckWorkspace()">
 
     <!-- Kết quả kiểm tra -->
     <div id="check-result"></div>
@@ -100,21 +106,31 @@
 </div>
 
 <script>
+
+let checkTimer = null;
+
+// Gọi sau khi người dùng dừng gõ 1 giây
+function debounceCheckWorkspace() {
+    clearTimeout(checkTimer);
+    checkTimer = setTimeout(checkWorkspace, 1000);
+}
+
 async function checkWorkspace() {
     const ns = document.getElementById("atlassian_namespace").value.trim();
     const resultBox = document.getElementById("check-result");
 
     if (!ns) {
-        resultBox.style.display = "block";
-        resultBox.className = "error";
-        resultBox.innerText = "Vui lòng nhập workspace!";
+        resultBox.style.display = "none";
         return;
     }
 
+    // Hiện trạng thái đang kiểm tra
+    resultBox.style.display = "block";
+    resultBox.className = "checking";
+    resultBox.innerText = "Đang kiểm tra workspace...";
+
     const response = await fetch("/check_namespace?ns=" + encodeURIComponent(ns));
     const data = await response.json();
-
-    resultBox.style.display = "block";
 
     if (data.ok) {
         resultBox.className = "success";
