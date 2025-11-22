@@ -13,7 +13,7 @@ from model.user_story_item import UserStoryItem
 client = OpenAI(api_key=constant.open_api_key)
 
 
-def create_list_user_story_jira_step():
+def create_list_user_story_jira_step(project_key):
     for user_story in lstUserStoryPreview:
         create_user_story_item(user_story)
         time.sleep(0.5)

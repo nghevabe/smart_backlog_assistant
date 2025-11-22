@@ -114,12 +114,13 @@ def processing():
     epic = request.form.get("epic_name", "").strip()
     goal = request.form.get("business_goal", "").strip()
     desc = request.form.get("high_level_desc", "").strip()
+    project_key = request.form.get("jira_project", "").strip()
     requirement = request.form.get("requirement_type", "").strip()
 
     # Trả về trang hiển thị loading + auto fetch /run_async
     return render_template(
         "processing.html",
-        epic=epic, goal=goal, desc=desc, requirement=requirement
+        epic=epic, goal=goal, desc=desc, requirement=requirement, project_key=project_key
     )
 
 
@@ -130,7 +131,7 @@ def run_step():
     epic = data.get("epic_name", "")
     goal = data.get("business_goal", "")
     desc = data.get("high_level_desc", "")
-    task_type = data.get("requirement_type", "")
+    project_key = data.get("project_key", "")
 
     try:
         if step == 1:
@@ -144,7 +145,7 @@ def run_step():
             return jsonify({"status": "success", "result": result, "step": 1})
 
         elif step == 2:
-            create_list_user_story_jira_step()
+            create_list_user_story_jira_step(project_key)
             return jsonify({"status": "success", "result": [], "step": 2})
 
         elif step == 3:
