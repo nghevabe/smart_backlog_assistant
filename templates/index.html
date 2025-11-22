@@ -105,36 +105,44 @@
 
 <div class="card">
 
-    <!-- Title -->
     <h2>Auto Backlog and Planning</h2>
 
-    <form id="epicForm" action="{{ url_for('processing') }}" method="post">
+<form id="epicForm" action="{{ url_for('processing') }}" method="post">
 
-        <label for="url_doc">URL Doc</label>
-        <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-            <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}"
-                   required style="flex:1;"
-                   placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
-            <button type="button" class="small-btn" onclick="fillFromServer()">Quét</button>
-        </div>
+    <label for="project_list">List Projects</label>
+    <div style="display:flex; gap:8px; margin-top:6px;">
+        <select id="project_list" name="jira_project" required
+                style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd;">
+            <option value="">-- Chưa tải danh sách dự án --</option>
+        </select>
+    </div>
 
-        <label for="epic_name">Epic Name</label>
-        <input id="epic_name" name="epic_name" type="text" value="{{ epic|default('') }}" required
-               placeholder="Nhập tên chức năng/dự án (VD: Quản lý tài chính cá nhân)"/>
+    <label for="url_doc">URL Doc</label>
+    <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+        <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}"
+               required style="flex:1;"
+               placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
+        <button type="button" class="small-btn" onclick="fillFromServer()">Quét</button>
+    </div>
 
-        <label for="business_goal">Business Goal</label>
-        <input id="business_goal" name="business_goal" type="text" value="{{ goal|default('') }}"
-               placeholder="Mục tiêu của dự án"/>
+    <label for="epic_name">Epic Name</label>
+    <input id="epic_name" name="epic_name" type="text" value="{{ epic|default('') }}" required
+           placeholder="Nhập tên chức năng/dự án (VD: Quản lý tài chính cá nhân)"/>
 
-        <label for="high_level_desc">High-level Description</label>
-        <textarea id="high_level_desc" name="high_level_desc" rows="4"
-                  placeholder="Mô tả ngắn gọn về tính năng...">{{ desc|default('') }}</textarea>
+    <label for="business_goal">Business Goal</label>
+    <input id="business_goal" name="business_goal" type="text" value="{{ goal|default('') }}"
+           placeholder="Mục tiêu của dự án"/>
 
-        <div style="width:100%;" class="btn-container">
-            <button style="width:100%;" type="submit">Xử Lý</button>
-        </div>
+    <label for="high_level_desc">High-level Description</label>
+    <textarea id="high_level_desc" name="high_level_desc" rows="4"
+              placeholder="Mô tả ngắn gọn về tính năng...">{{ desc|default('') }}</textarea>
 
-    </form>
+    <div style="width:100%;" class="btn-container">
+        <button style="width:100%;" type="submit">Xử Lý</button>
+    </div>
+
+</form>
+
 </div>
 
 <script>
@@ -147,6 +155,34 @@
       document.getElementById("business_goal").value = data.business_goal;
       document.getElementById("high_level_desc").value = data.high_level_desc;
     }
+
+// ------------------ LOAD PROJECTS ------------------
+async function loadProjects() {
+    const res = await fetch("/load_projects_session", { method: "GET" });
+    const data = await res.json();
+
+    const select = document.getElementById("project_list");
+    select.innerHTML = "";
+
+    if (!data.ok) {
+        select.innerHTML = '<option value="">Không load được dự án</option>';
+        console.error(data.message);
+        return;
+    }
+
+    data.projects.forEach(p => {
+        const option = document.createElement("option");
+        option.value = p.key;
+        option.text = p.name + " (" + p.key + ")";
+        select.appendChild(option);
+    });
+}
+
+// ----------- AUTO CALL LOAD PROJECTS --------------
+document.addEventListener("DOMContentLoaded", function () {
+    loadProjects();
+});
+
 </script>
 
 </body>

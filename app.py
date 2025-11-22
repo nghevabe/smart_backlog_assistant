@@ -66,6 +66,37 @@ def save_jira_config():
     return {"ok": True, "message": "Đã lưu cấu hình Jira!"}
 
 
+@app.route("/load_projects_session", methods=["GET"])
+def load_projects_session():
+    ns = session.get("atlassian_namespace")
+    email = session.get("atlassian_user")
+    token = session.get("atlassian_api_token")
+
+    if not ns or not email or not token:
+        return {"ok": False, "message": "Session Jira chưa được cấu hình!"}
+
+    try:
+        url = ns.rstrip("/") + "/rest/api/3/project/search"
+        r = requests.get(url, auth=(email, token), timeout=10)
+
+        if r.status_code != 200:
+            return {"ok": False, "message": f"HTTP {r.status_code}"}
+
+        json_data = r.json()
+        results = []
+
+        for p in json_data.get("values", []):
+            results.append({
+                "key": p.get("key"),
+                "name": p.get("name")
+            })
+
+        return {"ok": True, "projects": results}
+
+    except Exception as e:
+        return {"ok": False, "message": str(e)}
+
+
 @app.route("/get_fill_data", methods=["GET"])
 def get_fill_data():
     url = request.args.get("doc")
@@ -75,6 +106,7 @@ def get_fill_data():
         "business_goal": business_goal,
         "high_level_desc": des
     })
+
 
 # Trang processing: nhận form và render trang loading
 @app.route("/processing", methods=["POST"])
