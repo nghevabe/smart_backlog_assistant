@@ -193,5 +193,4 @@ def source_html_plan_doc(body_table_plan):
     <!-- in đậm --> Phân bổ effort: <!-- in đậm --> <!-- in thường --> Web (x ngày công), Mobile (x ngày công), Backend (x ngày công), UI/UX (x ngày công), QC (x ngày công). <!-- in thường -->
 
      """
-
     return promt_estimate_html_source
