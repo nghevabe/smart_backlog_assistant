@@ -1,5 +1,4 @@
 import time
-from jira import JIRA
 from openai import OpenAI
 
 from model.task_item import TaskItem
@@ -14,19 +13,20 @@ client = OpenAI(api_key=constant.open_api_key)
 
 
 def create_list_user_story_jira_step(project_key):
+    lstUserStoryItem.clear()
     for user_story in lstUserStoryPreview:
-        create_user_story_item(user_story)
+        create_user_story_item(user_story, project_key)
         time.sleep(0.5)
 
 
-def create_user_story_item(user_story_item):
+def create_user_story_item(user_story_item, project_key):
     title = user_story_item.title
     content = user_story_item.content
     criteria = user_story_item.criteria
 
     full_description = content + "\n\n" + "Acceptance Criteria:" + "\n" + criteria
     issue_dict = {
-        'project': {'key': 'SCRUM'},  # Replace with your project key
+        'project': {'key': project_key},  # Replace with your project key
         'summary': title,
         'description': full_description,
         'issuetype': {'name': 'Story'},  # Replace with the desired issue type
@@ -42,11 +42,11 @@ def create_user_story_item(user_story_item):
     print(f'Created new issue: {new_issue.key}')
 
 
-def create_sub_task(parent_id, title, content, estimate, team):
+def create_sub_task(parent_id, title, content, estimate, team, project_key):
     subtask = {
         "project":
             {
-                "key": "SCRUM"
+                "key": project_key
             },
         "parent":
             {
@@ -75,10 +75,11 @@ def create_sub_task(parent_id, title, content, estimate, team):
     lstTaskItem.append(task_item)
 
 
-def create_task_jira_step():
+def create_task_jira_step(project_key):
+    lstTaskItem.clear()
     print("lstTaskItemPreview: "+str(len(lstTaskItemPreview)))
     for task in lstTaskItemPreview:
-        create_sub_task(task.user_story_id, task.title, task.des, task.manday, task.team)
+        create_sub_task(task.user_story_id, task.title, task.des, task.manday, task.team, project_key)
         time.sleep(0.5)
 
 

@@ -23,11 +23,11 @@ def parse_subtask(res, story_id, story_content):
 
     for i in range(len(lst_sub_task_title)):
         day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
-        jira_task_service_handle.create_sub_task(story_id,
-                                                 lst_sub_task_title[i],
-                                                 lst_sub_task_content[i],
-                                                 day_number,
-                                                 lst_sub_task_team[i])
+        # jira_task_service_handle.create_sub_task(story_id,
+        #                                          lst_sub_task_title[i],
+        #                                          lst_sub_task_content[i],
+        #                                          day_number,
+        #                                          lst_sub_task_team[i])
 
         task_item = TaskItem(story_content, lst_sub_task_title[i], lst_sub_task_content[i], lst_sub_task_team[i],
                              day_number)

@@ -159,7 +159,7 @@ def run_step():
             return jsonify({"status": "success", "result": result, "step": 3})
         # ... Step 4–5 tương tự ...
         elif step == 4:
-            create_task_jira_step()
+            create_task_jira_step(project_key)
             return jsonify({"status": "success", "result": [], "step": 4})
         # ... Step 5 tương tự ...
         elif step == 5:
