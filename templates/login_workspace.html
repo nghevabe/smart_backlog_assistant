@@ -99,7 +99,18 @@
     <input type="email" id="atlassian_user" placeholder="ví dụ: linhth8@bidv.com.vn">
 
     <!-- Token -->
-    <label for="atlassian_api_token">API Token</label>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+        <label for="atlassian_api_token" style="margin:0; font-weight:600; color:#171F21;">
+            API Token
+        </label>
+
+        <!-- Link hướng dẫn -->
+        <a href="/onboarding"
+           style="font-size:13px; color:#005C59; font-weight:600; text-decoration:underline; cursor:pointer;">
+            Hướng dẫn cách lấy Token
+        </a>
+    </div>
+
     <input type="password" id="atlassian_api_token" placeholder="Dán API Token vào đây">
 
     <button style="margin-top:16px; width:100%;" onclick="saveConfig()">Lưu Cấu Hình</button>
@@ -107,58 +118,58 @@
 
 <script>
 
-let checkTimer = null;
+    let checkTimer = null;
 
-// Gọi sau khi người dùng dừng gõ 1 giây
-function debounceCheckWorkspace() {
-    clearTimeout(checkTimer);
-    checkTimer = setTimeout(checkWorkspace, 1000);
-}
-
-async function checkWorkspace() {
-    const ns = document.getElementById("atlassian_namespace").value.trim();
-    const resultBox = document.getElementById("check-result");
-
-    if (!ns) {
-        resultBox.style.display = "none";
-        return;
+    // Gọi sau khi người dùng dừng gõ 1 giây
+    function debounceCheckWorkspace() {
+        clearTimeout(checkTimer);
+        checkTimer = setTimeout(checkWorkspace, 1000);
     }
 
-    // Hiện trạng thái đang kiểm tra
-    resultBox.style.display = "block";
-    resultBox.className = "checking";
-    resultBox.innerText = "Đang kiểm tra workspace...";
+    async function checkWorkspace() {
+        const ns = document.getElementById("atlassian_namespace").value.trim();
+        const resultBox = document.getElementById("check-result");
 
-    const response = await fetch("/check_namespace?ns=" + encodeURIComponent(ns));
-    const data = await response.json();
+        if (!ns) {
+            resultBox.style.display = "none";
+            return;
+        }
 
-    if (data.ok) {
-        resultBox.className = "success";
-        resultBox.innerText = "✔ Workspace hợp lệ!";
-    } else {
-        resultBox.className = "error";
-        resultBox.innerText = "❌ Không kết nối được: " + data.message;
+        // Hiện trạng thái đang kiểm tra
+        resultBox.style.display = "block";
+        resultBox.className = "checking";
+        resultBox.innerText = "Đang kiểm tra workspace...";
+
+        const response = await fetch("/check_namespace?ns=" + encodeURIComponent(ns));
+        const data = await response.json();
+
+        if (data.ok) {
+            resultBox.className = "success";
+            resultBox.innerText = "✔ Workspace hợp lệ!";
+        } else {
+            resultBox.className = "error";
+            resultBox.innerText = "❌ Không kết nối được: " + data.message;
+        }
     }
-}
 
-async function saveConfig() {
-    const ns = document.getElementById("atlassian_namespace").value.trim();
-    const email = document.getElementById("atlassian_user").value.trim();
-    const token = document.getElementById("atlassian_api_token").value.trim();
+    async function saveConfig() {
+        const ns = document.getElementById("atlassian_namespace").value.trim();
+        const email = document.getElementById("atlassian_user").value.trim();
+        const token = document.getElementById("atlassian_api_token").value.trim();
 
-    const body = { namespace: ns, email: email, token: token };
+        const body = { namespace: ns, email: email, token: token };
 
-    const response = await fetch("/save_jira_config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-    });
+        const response = await fetch("/save_jira_config", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
 
-    const data = await response.json();
-    alert(data.message);
+        const data = await response.json();
+        alert(data.message);
 
-    if (data.ok) window.location.href = "/";
-}
+        if (data.ok) window.location.href = "/";
+    }
 </script>
 
 </body>
