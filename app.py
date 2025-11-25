@@ -24,6 +24,11 @@ def config_jira():
     return render_template("login_workspace.html")
 
 
+@app.route("/onboarding")
+def onboarding():
+    return render_template("onboarding.html")
+
+
 @app.route("/", methods=["GET"])
 def index():
     # Nếu chưa login Jira → yêu cầu nhập namespace/email/token
