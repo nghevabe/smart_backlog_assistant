@@ -77,7 +77,6 @@ def create_sub_task(parent_id, title, content, estimate, team, project_key):
 
 def create_task_jira_step(project_key):
     lstTaskItem.clear()
-    print("lstTaskItemPreview: "+str(len(lstTaskItemPreview)))
     for task in lstTaskItemPreview:
         create_sub_task(task.user_story_id, task.title, task.des, task.manday, task.team, project_key)
         time.sleep(0.5)

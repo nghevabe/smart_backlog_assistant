@@ -8,7 +8,6 @@ from alllatsian.jira.jira_task_service_handle import create_list_user_story_jira
 from extracter import scaner
 from data.data_app import lstUserStoryPreview, lstTaskItemPreview
 
-
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
@@ -178,7 +177,6 @@ def run_step():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
-
 from flask import request, jsonify
 
 
@@ -259,6 +257,7 @@ def update_all_sub_tasks():
 def result():
     status = request.args.get("status", "unknown")
     return render_template("result.html", status=status)
+
 
 if __name__ == "__main__":
     # Bật threaded để xử lý tốt nhiều request liên tiếp
