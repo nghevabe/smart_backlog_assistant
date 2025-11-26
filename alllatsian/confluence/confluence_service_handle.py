@@ -25,10 +25,8 @@ def create_table_est_for_doc_step():
     print("create_table_est_for_doc_step")
     lst_header = []
     table_body = ""
-    print("len(lstTaskItem): "+str(len(lstTaskItem)))
     for i in range(len(lstTaskItem)):
         item_task = lstTaskItem[i]
-        print("item_task.user_story_id: "+item_task.user_story_id)
         if item_task.user_story_id not in lst_header:
             lst_header.append(item_task.user_story_id)
             table_body = table_body + genarate_plan.generate_row_header(i, item_task,
@@ -41,7 +39,6 @@ def create_table_est_for_doc_step():
 
 def get_title_by_id(uid):
     title = ""
-    print("len(lstUserStoryItem): " + str(len(lstUserStoryItem)))
     for task in lstUserStoryItem:
         if uid == task.uid:
             title = task.title

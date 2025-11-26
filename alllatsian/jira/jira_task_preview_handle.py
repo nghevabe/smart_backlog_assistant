@@ -80,7 +80,6 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
         ]
     )
 
-    print("agent_gen_sub_task_preview_start:")
     response_data = completion.choices[0].message.content
 
     print("response_data: "+response_data)
@@ -90,7 +89,6 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     lst_sub_task_estimate = re.findall(regexEstimate, response_data)
     lst_sub_task_team = re.findall(regexTeam, response_data)
 
-    print("lst_sub_task_title: "+str(len(lst_sub_task_title)))
     for i in range(len(lst_sub_task_title)):
         day_number = re.findall(regexNumber, lst_sub_task_estimate[i])[0]
 
