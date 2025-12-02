@@ -43,8 +43,9 @@ acceptance criteria here
 def agent_gen_user_story_cmmi():
     promt = f"""
     Tôi là 1 BA, Tôi đang cần phân rã chức năng để tạo User Story dựa vào nội dung URD.
-     Sau đây là nội dung tôi đã crawl được: {constant.content_cmmi_5}
-     . Hãy xác định số lượng Màn Hình trong URD và tạo ra số lượng User Story tương ứng với số lượng màn hình. 
+     Sau đây là nội dung của tài liệu tôi đã crawl được: " {constant.content_document_input} "
+     . Hãy xác định số lượng Màn Hình trong URD và tạo ra số lượng User Story tương ứng với số lượng màn hình.
+     Lưu ý là không tách User Story quá nhỏ nhé.
 Output sẽ theo form như sau:
 #begin_response#
 Title: #tit_start#title here#tit_end#
