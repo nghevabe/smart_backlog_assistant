@@ -48,7 +48,7 @@ def content_extraction(id_page):
 
     page_content = contents['body']
     html_content = page_content['storage']['value']
-    name, des, result, constant.content_cmmi_5 = handle_cmmi(html_content)
+    name, des, result, constant.content_document_input = handle_cmmi(html_content)
     return name, result, des
 
 
