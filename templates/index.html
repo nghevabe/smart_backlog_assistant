@@ -6,94 +6,121 @@
     <title>Run main_app - Epic Prompt</title>
     <style>
         body{
-               font-family: Arial, sans-serif;
-               background: url("{{ url_for('static', filename='bg_bidv.png') }}") no-repeat center center fixed;
-               background-size: cover;
-               padding:24px;
-             }
-             .card{
-               max-width:720px;
-               margin: 100px auto 0 auto;
-               background:rgba(255,255,255,1.0);
-               padding:32px;
-               border-radius:12px;
-               box-shadow:0 6px 18px rgba(0,0,0,0.1);
-               position: relative;
-             }
-             h2{
-               text-align:center;
-               margin-bottom:24px;
-               color:#171F21;
-             }
-             label{
-               display:block;
-               margin-top:12px;
-               font-weight:600;
-               color:#171F21;
-             }
-             input[type="text"], textarea{
-               width:100%;
-               padding:10px;
-               border-radius:6px;
-               border:1px solid #ddd;
-               margin-top:6px;
-             }
-             .btn-container{text-align:center;margin-top:16px}
-             button{
-               padding:12px 24px;
-               border-radius:6px;
-               border:none;
-               background:#005C59;
-               color:#fff;
-               cursor:pointer;
-               font-size:16px;
-               font-weight:600;
-               transition:background 0.2s ease;
-             }
-             button:hover{background:#004a99}
-             .small-btn {
-                 padding:10px 12px;
-                 border-radius:6px;
-                 border:none;
-                 background:#005C59;
-                 color:#fff;
-                 cursor:pointer;
-                 font-size:13px;
-                 font-weight:600;
-                 transition:background 0.2s ease;
-             }
-             .small-btn:hover { background:#004a99; }
+            font-family: Arial, sans-serif;
+            background: url("{{ url_for('static', filename='bg_bidv.png') }}") no-repeat center center fixed;
+            background-size: cover;
+            padding:24px;
+        }
+        .card{
+            max-width:720px;
+            margin: 100px auto 0 auto;
+            background:rgba(255,255,255,1.0);
+            padding: 8px 32px 32px 32px;
+            border-radius:12px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        h2{
+            text-align:center;
+            margin-bottom:40px;
+            color:#171F21;
+        }
+        label{
+            display:block;
+            margin-top:12px;
+            font-weight:600;
+            color:#171F21;
+        }
+        input[type="text"], textarea{
+            width:100%;
+            padding:10px;
+            border-radius:6px;
+            border:1px solid #ddd;
+            margin-top:6px;
+        }
+        .btn-container{text-align:center;margin-top:16px}
+        button{
+            padding:12px 24px;
+            border-radius:6px;
+            border:none;
+            background:#005C59;
+            color:#fff;
+            cursor:pointer;
+            font-size:16px;
+            font-weight:600;
+            transition:background 0.2s ease;
+        }
+        button:hover{background:#004a99}
+        .small-btn {
+            padding:10px 12px;
+            border-radius:6px;
+            border:none;
+            background:#005C59;
+            color:#fff;
+            cursor:pointer;
+            font-size:13px;
+            font-weight:600;
+            transition:background 0.2s ease;
+        }
+        .small-btn:hover { background:#004a99; }
 
-             input::placeholder,
-             textarea::placeholder {
-                 color: #9EABAD;
-                 font-style: italic;
-                 opacity: 1;
-             }
+        input::placeholder,
+        textarea::placeholder {
+            color: #9EABAD;
+            font-style: italic;
+            opacity: 1;
+        }
 
-/* Nút logout cố định góc phải */
-.top-right {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 999;
+        /* Nút logout cố định góc phải */
+        .top-right {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+.custom-select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #D0D7DA;
+    font-size: 15px;
+    background-color: #fff;
+    color: #2A3B3F;
+    outline: none;
+    appearance: none; /* ẩn arrow mặc định */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='14' viewBox='0 0 20 20' width='14' xmlns='http://www.w3.org/2000/svg'><path d='M5.516 7.548a.625.625 0 0 1 .884-.884L10 10.264l3.6-3.6a.625.625 0 1 1 .884.884l-4.042 4.042a.625.625 0 0 1-.884 0z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.logout-btn {
-    background:#d9534f;
-    color:white;
-    padding:8px 14px;
-    border-radius:6px;
-    border:none;
-    font-size:14px;
-    cursor:pointer;
-    font-weight:600;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+.custom-select:hover {
+    border-color: #AAB3B6;
 }
 
-.logout-btn:hover {
-    background:#c9302c;
+.custom-select:focus {
+    border-color: #005C59;
+    box-shadow: 0 0 0 3px rgba(0, 92, 89, 0.15);
 }
+
+        .logout-btn {
+            background:#d9534f;
+            color:white;
+            padding:8px 14px;
+            border-radius:6px;
+            border:none;
+            font-size:14px;
+            cursor:pointer;
+            font-weight:600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .logout-btn:hover {
+            background:#c9302c;
+        }
     </style>
 </head>
 <body>
@@ -107,84 +134,57 @@
 
     <h2>Auto Backlog and Planning</h2>
 
-<form id="epicForm" action="{{ url_for('processing') }}" method="post">
+    <form id="epicForm" action="{{ url_for('processing') }}" method="post">
 
-    <label for="project_list">List Projects</label>
-    <div style="display:flex; gap:8px; margin-top:6px;">
-        <select id="project_list" name="jira_project" required
-                style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd;">
-            <option value="">-- Chưa tải danh sách dự án --</option>
-        </select>
-    </div>
+        <label for="project_list">List Projects</label>
+        <div style="display:flex; gap:8px; margin-top:6px; margin-bottom:24px;">
+            <select id="project_list" name="jira_project" required class="custom-select"
+                    style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd;">
+                <option value="">-- Chưa tải danh sách dự án --</option>
+            </select>
+        </div>
 
-    <label for="url_doc">URL Doc</label>
-    <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
-        <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}"
-               required style="flex:1;"
-               placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
-        <button type="button" class="small-btn" onclick="fillFromServer()">Quét</button>
-    </div>
+        <label for="url_doc">URL Doc</label>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:6px; margin-bottom:42px;">
+            <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}"
+                   required style="flex:1;"
+                   placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
+        </div>
 
-    <label for="epic_name">Epic Name</label>
-    <input id="epic_name" name="epic_name" type="text" value="{{ epic|default('') }}" required
-           placeholder="Nhập tên chức năng/dự án (VD: Quản lý tài chính cá nhân)"/>
+        <!-- BUTTON -->
+        <div style="width:100%;" class="btn-container">
+            <button style="width:100%;" type="submit">Xử Lý</button>
+        </div>
 
-    <label for="business_goal">Business Goal</label>
-    <input id="business_goal" name="business_goal" type="text" value="{{ goal|default('') }}"
-           placeholder="Mục tiêu của dự án"/>
-
-    <label for="high_level_desc">High-level Description</label>
-    <textarea id="high_level_desc" name="high_level_desc" rows="4"
-              placeholder="Mô tả ngắn gọn về tính năng...">{{ desc|default('') }}</textarea>
-
-    <div style="width:100%;" class="btn-container">
-        <button style="width:100%;" type="submit">Xử Lý</button>
-    </div>
-
-</form>
+    </form>
 
 </div>
 
 <script>
-    async function fillFromServer() {
-      const urlDoc = document.getElementById("url_doc").value;
-      const link_request = '/get_fill_data?doc=' + encodeURIComponent(urlDoc)
-      const res = await fetch(link_request);
-      const data = await res.json();
-      document.getElementById("epic_name").value = data.epic_name;
-      document.getElementById("business_goal").value = data.business_goal;
-      document.getElementById("high_level_desc").value = data.high_level_desc;
+    // LOAD PROJECTS
+    async function loadProjects() {
+        const res = await fetch("/load_projects_session", { method: "GET" });
+        const data = await res.json();
+
+        const select = document.getElementById("project_list");
+        select.innerHTML = "";
+
+        if (!data.ok) {
+            select.innerHTML = '<option value="">Không load được dự án</option>';
+            console.error(data.message);
+            return;
+        }
+
+        data.projects.forEach(p => {
+            const option = document.createElement("option");
+            option.value = p.key;
+            option.text = p.name + " (" + p.key + ")";
+            select.appendChild(option);
+        });
     }
 
-// ------------------ LOAD PROJECTS ------------------
-async function loadProjects() {
-    const res = await fetch("/load_projects_session", { method: "GET" });
-    const data = await res.json();
-
-    const select = document.getElementById("project_list");
-    select.innerHTML = "";
-
-    if (!data.ok) {
-        select.innerHTML = '<option value="">Không load được dự án</option>';
-        console.error(data.message);
-        return;
-    }
-
-    data.projects.forEach(p => {
-        const option = document.createElement("option");
-        option.value = p.key;
-        option.text = p.name + " (" + p.key + ")";
-        select.appendChild(option);
-    });
-}
-
-// ----------- AUTO CALL LOAD PROJECTS --------------
-document.addEventListener("DOMContentLoaded", function () {
-    loadProjects();
-});
-
+document.addEventListener("DOMContentLoaded", function () {  loadProjects(); });
 </script>
 
 </body>
-
 </html>

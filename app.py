@@ -101,30 +101,19 @@ def load_projects_session():
         return {"ok": False, "message": str(e)}
 
 
-@app.route("/get_fill_data", methods=["GET"])
-def get_fill_data():
-    url = request.args.get("doc")
-    epic_name, business_goal, des = scaner.scan_page_content(url)
-    return jsonify({
-        "epic_name": epic_name,
-        "business_goal": business_goal,
-        "high_level_desc": des
-    })
-
-
 # Trang processing: nhận form và render trang loading
 @app.route("/processing", methods=["POST"])
 def processing():
-    epic = request.form.get("epic_name", "").strip()
-    goal = request.form.get("business_goal", "").strip()
-    desc = request.form.get("high_level_desc", "").strip()
+    url_doc = request.form.get("url_doc", "").strip()
     project_key = request.form.get("jira_project", "").strip()
     requirement = request.form.get("requirement_type", "").strip()
+
+    document_content_input = scaner.scan_page_content(url_doc)
 
     # Trả về trang hiển thị loading + auto fetch /run_async
     return render_template(
         "processing.html",
-        epic=epic, goal=goal, desc=desc, requirement=requirement, project_key=project_key
+        document_content_input=document_content_input, requirement=requirement, project_key=project_key
     )
 
 
@@ -132,14 +121,12 @@ def processing():
 def run_step():
     data = request.get_json()
     step = data.get("step")
-    epic = data.get("epic_name", "")
-    goal = data.get("business_goal", "")
-    desc = data.get("high_level_desc", "")
+    document_content_input = data.get("document_content_input", "")
     project_key = data.get("project_key", "")
 
     try:
         if step == 1:
-            create_lst_user_story_preview_step(epic, goal, desc)
+            create_lst_user_story_preview_step(document_content_input)
             lst = lstUserStoryPreview
             # list of UserStoryItem → dict để gửi ra JSON
             result = [

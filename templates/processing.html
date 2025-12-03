@@ -158,10 +158,8 @@
   <script>
 
     const payload = {
-      epic_name: {{ epic|tojson }},
-      business_goal: {{ goal|tojson }},
-      high_level_desc: {{ desc|tojson }},
       requirement_type: {{ requirement|tojson }},
+      document_content_input: {{ document_content_input|tojson }},
       project_key: {{ project_key|tojson }}
     };
 

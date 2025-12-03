@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
 import html
 import re
-
 from utils import constant
 from utils.config import confluence_config
 
@@ -13,33 +12,14 @@ def get_page_id(url):
     return int(match_id[0])
 
 
-def get_title_cmmi(source):
-    return "This is Title"
-
-
-def get_des_cmmi(source: str) -> str | None:
-
-    return """Cung cấp chức năng tạo và quản lý mã thỏa thuận tỷ giá phục vụ các phân hệ giao dịch có liên quan trên iBank/FX.
-
-FX Hub được tham chiếu để kiểm tra biên độ/tỷ giá niêm yết và các cảnh báo khi đẩy duyệt mã thỏa thuận."""
-
-
-def get_expect_cmmi(source):
-    return "Kết Quả Mong Muốn không được đề cập"
-
-
 def handle_cmmi(source):
     # 2. Parse bằng BeautifulSoup
     soup = BeautifulSoup(source, "html.parser")
-
     # 3. Lấy toàn bộ text (tự loại thẻ)
-    text_only = soup.get_text(separator="\n", strip=True)
-
-    return get_title_cmmi(text_only), get_des_cmmi(text_only), get_expect_cmmi(text_only), text_only
+    return soup.get_text(separator="\n", strip=True)
 
 
 def content_extraction(id_page):
-
     contents = confluence_config().get_page_by_id(
         id_page,
         expand="body.storage,version",
@@ -48,8 +28,8 @@ def content_extraction(id_page):
 
     page_content = contents['body']
     html_content = page_content['storage']['value']
-    name, des, result, constant.content_document_input = handle_cmmi(html_content)
-    return name, result, des
+
+    return handle_cmmi(html_content)
 
 
 def scan_page_content(url):

@@ -40,10 +40,10 @@ acceptance criteria here
     return completion.choices[0].message.content
 
 
-def agent_gen_user_story_cmmi():
+def agent_gen_user_story_cmmi(document_content_input):
     promt = f"""
     Tôi là 1 BA, Tôi đang cần phân rã chức năng để tạo User Story dựa vào nội dung URD.
-     Sau đây là nội dung của tài liệu tôi đã crawl được: " {constant.content_document_input} "
+     Sau đây là nội dung của tài liệu tôi đã crawl được: " {document_content_input} "
      . Hãy xác định số lượng Màn Hình trong URD và tạo ra số lượng User Story tương ứng với số lượng màn hình.
      Lưu ý là không tách User Story quá nhỏ nhé.
 Output sẽ theo form như sau:
@@ -68,9 +68,9 @@ acceptance criteria here
     return completion.choices[0].message.content
 
 
-def create_lst_user_story_preview_step(epic_name, business_goal, high_level_desc):
+def create_lst_user_story_preview_step(document_content_input):
     lstUserStoryPreview.clear()
-    res = agent_gen_user_story_cmmi()
+    res = agent_gen_user_story_cmmi(document_content_input)
     lst_story = res.split("#begin_response#")
 
     for story in lst_story:
