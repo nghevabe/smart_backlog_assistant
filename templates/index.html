@@ -151,6 +151,12 @@
                    placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
         </div>
 
+        <div style="margin-top:8px; margin-bottom:16px;">
+    <button type="button" class="small-btn" onclick="testLoadCustomFields()">
+        Test Get Custom Fields
+    </button>
+        </div>
+
         <!-- BUTTON -->
         <div style="width:100%;" class="btn-container">
             <button style="width:100%;" type="submit">Xử Lý</button>
@@ -182,6 +188,30 @@
             select.appendChild(option);
         });
     }
+
+    async function testLoadCustomFields() {
+    console.log("=== TEST load_custom_fields ===");
+
+    try {
+        const res = await fetch("/load_createmeta", { method: "GET" });
+        const data = await res.json();
+
+        if (!data.ok) {
+            console.error("❌ API Error:", data.message);
+            alert("Lỗi: " + data.message);
+            return;
+        }
+
+        console.log("✅ Total custom fields:", data.total);
+        console.table(data.custom_fields);
+
+        alert("Load custom fields OK! Check console log.");
+
+    } catch (e) {
+        console.error("🔥 Exception:", e);
+        alert("Exception khi gọi API");
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function () {  loadProjects(); });
 </script>

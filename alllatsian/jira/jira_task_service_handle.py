@@ -63,6 +63,31 @@ def create_sub_task(parent_id, title, content, estimate, team, project_key):
         },
     }
 
+    # subtask = {
+    #     "project":
+    #         {
+    #             "key": "KH01420231"
+    #         },
+    #     "parent":
+    #         {
+    #             "key": parent_id
+    #         },
+    #     "summary": "[" + team + "]" + "[" + parent_id + "] " + title,
+    #     "description": content,
+    #     "issuetype":
+    #         {
+    #             "name": "Sub-task"
+    #         },
+    #     "timetracking": {
+    #         "originalEstimate": estimate + "d"
+    #     },
+    #     "customfield_10035": start_date,
+    #     "duedate": due_date,
+    #     "components": [{"id": "11284"}],
+    #     "customfield_10084": {"value": "UI/UX_Thiết kế cho các PM trung bình"},
+    #     'assignee': {'id': None}
+    # }
+
     # Create the issue
     new_issue = jira_config().create_issue(fields=subtask)
     # Print the new issue key

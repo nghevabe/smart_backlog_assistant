@@ -5,6 +5,7 @@ from alllatsian.confluence.confluence_service_handle import create_table_est_for
 from alllatsian.jira.jira_task_controller import create_lst_task_preview_step
 from alllatsian.jira.jira_task_preview_handle import create_lst_user_story_preview_step
 from alllatsian.jira.jira_task_service_handle import create_list_user_story_jira_step, create_task_jira_step
+from dynamic_workspace.metadata_handler import load_list_fields
 from extracter import scaner
 from data.data_app import lstUserStoryPreview, lstTaskItemPreview
 
@@ -68,6 +69,61 @@ def save_jira_config():
     session["atlassian_api_token"] = data["token"]
 
     return {"ok": True, "message": "Đã lưu cấu hình Jira!"}
+
+
+@app.route("/load_createmeta", methods=["GET"])
+def load_createmeta():
+    ns = session.get("atlassian_namespace")
+    email = session.get("atlassian_user")
+    token = session.get("atlassian_api_token")
+
+    # project_key = request.args.get("project")
+    project_key = "SCRUM"
+
+    print("=== [load_createmeta] START ===")
+    print(f"Project: {project_key}")
+    print(f"Namespace: {ns}")
+    print(f"User: {email}")
+
+    if not ns or not email or not token:
+        print("❌ Session Jira chưa được cấu hình")
+        return {"ok": False, "message": "Session Jira chưa được cấu hình!"}
+
+    if not project_key:
+        print("❌ Missing project key")
+        return {"ok": False, "message": "Thiếu project key"}
+
+    try:
+        url = (
+            ns.rstrip("/")
+            + "/rest/api/3/issue/createmeta"
+            + f"?projectKeys={project_key}"
+            + "&expand=projects.issuetypes.fields"
+        )
+
+        print(f"➡️ Calling Jira API: {url}")
+
+        r = requests.get(url, auth=(email, token), timeout=15)
+
+        print(f"⬅️ HTTP Status: {r.status_code}")
+
+        if r.status_code != 200:
+            print(f"❌ Jira API error: {r.text}")
+            return {"ok": False, "message": f"HTTP {r.status_code}"}
+
+        meta = r.json()
+        projects = meta.get("projects", [])
+
+        return {
+            "ok": True,
+            "project": project_key,
+            "metadata": load_list_fields(projects)
+        }
+
+    except Exception as e:
+        print("🔥 Exception occurred in load_createmeta")
+        print(str(e))
+        return {"ok": False, "message": str(e)}
 
 
 @app.route("/load_projects_session", methods=["GET"])
