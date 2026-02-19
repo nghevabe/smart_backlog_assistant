@@ -1,15 +1,22 @@
 import ast
 
 
-def handle_string(field): pass
-def handle_number(field): pass
+def handle_string(field): return ""
+def handle_number(field): return 0
 def handle_date(field): pass
 def handle_option(field): pass
-
 def handle_multi_option(field): pass
 def handle_user(field): pass
 def handle_priority(field): pass
 def handle_fallback(field): pass
+
+
+def append_payload_subtask_function(cur_dict: dict, lst_key_field, lst_value_field):
+    new_dict = cur_dict
+    for index in range(len(lst_value_field)):
+        new_dict[lst_key_field[index]] = lst_value_field[index]
+
+    return new_dict
 
 
 def handle_value_default(field_type: str, field_meta: dict | None = None):
