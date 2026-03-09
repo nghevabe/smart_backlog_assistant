@@ -155,6 +155,10 @@
     <button id="nextBtnStep3" style="display:none;">💾 Đẩy toàn bộ Task/SubTask lên Jira</button>
   </div>
 
+    <div style="margin-top:18px;">
+    <button id="exportBtnStep3" style="display:none;">💾 Tạo tài liệu Phân rã công việc</button>
+  </div>
+
   <script>
 
     const payload = {
@@ -170,12 +174,14 @@
       const loader = document.getElementById("loader");
       const nextBtn = document.getElementById("nextBtn");
       const nextBtnStep3 = document.getElementById("nextBtnStep3");
+      const exportBtnStep3 = document.getElementById("exportBtnStep3");
       const status = document.getElementById("statusText");
       const box = document.getElementById("resultBox");
 
       loader.style.display = "block";
       nextBtn.style.display = "none";
       nextBtnStep3.style.display = "none";
+      exportBtnStep3.style.display = "none";
       box.style.display = "none";
 
              stepContentTitle =
@@ -208,6 +214,7 @@
   if (data.step === 2){skipToNetxtStep();}
   else if (data.step === 3) {
     nextBtnStep3.style.display = "inline-block";
+    exportBtnStep3.style.display = "inline-block";
     status.textContent = "Kết quả Step 3: " + currentItems.length + " Task/Subtask Preview được tạo";
     if (currentItems.length > 0) renderSubTask(currentItems);
   }
@@ -322,6 +329,7 @@ async function skipToNetxtStep() {
           } else {
             document.getElementById("statusText").textContent = "🎉 Hoàn tất toàn bộ 5 bước!";
             document.getElementById("nextBtnStep3").style.display = "none";
+            document.getElementById("exportBtnStep3").style.display = "none";
           }
         } else {
           alert("❌ Lỗi ZZZ: " + data.message);
@@ -359,6 +367,7 @@ async function skipToNetxtStep() {
           } else {
             document.getElementById("statusText").textContent = "🎉 Hoàn tất toàn bộ 5 bước!";
             document.getElementById("nextBtnStep3").style.display = "none";
+            document.getElementById("exportBtnStep3").style.display = "none";
           }
         } else {
           alert("❌ Lỗi ZZZ: " + data.message);
@@ -366,10 +375,39 @@ async function skipToNetxtStep() {
       } catch (err) {
         alert("❌ Lỗi kết nối: " + err.message);
       }
+
+}
+
+async function exportLinkDoc() {
+
+    try {
+        const response = await fetch("/show_effort_estimation", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.ok) {
+
+            alert("Xử lý thành công!\nLink tài liệu:\n" + data.url);
+
+            window.open(data.url, "_blank");
+
+        } else {
+            alert("Lỗi: " + (data.message || "Unknown error"));
+        }
+
+    } catch (error) {
+        alert("Request failed: " + error);
+    }
 }
 
     document.getElementById("nextBtn").addEventListener("click", async () => {createUserStoryStep();});
     document.getElementById("nextBtnStep3").addEventListener("click", async () => { createSubTaskStep();});
+    document.getElementById("exportBtnStep3").addEventListener("click", async () => { exportLinkDoc();});
 
     // Auto chạy Step 1 khi load
     runStep(1);

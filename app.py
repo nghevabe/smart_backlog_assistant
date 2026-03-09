@@ -1,10 +1,12 @@
 import requests
 from flask import Flask, render_template, redirect, url_for, session
 
-from alllatsian.confluence.confluence_service_handle import create_table_est_for_doc_step
+from alllatsian.confluence.confluence_service_handle import create_table_est_for_doc_step, \
+    create_table_est_for_doc_step_demo
 from alllatsian.jira.jira_task_controller import create_lst_task_preview_step
 from alllatsian.jira.jira_task_preview_handle import create_lst_user_story_preview_step
 from alllatsian.jira.jira_task_service_handle import create_list_user_story_jira_step, create_task_jira_step
+from alllatsian.utils import parser_content
 from extracter import scaner
 from data.data_app import lstUserStoryPreview, lstTaskItemPreview
 
@@ -235,6 +237,23 @@ def update_all_sub_tasks():
     except Exception as e:
         return jsonify({
             "status": "error",
+            "message": str(e)
+        }), 500
+
+
+@app.route("/show_effort_estimation", methods=["POST"])
+def show_effort_estimation_document():
+    try:
+        create_table_est_for_doc_step_demo()
+
+        return jsonify({
+            "ok": True,
+            "url": parser_content.url_est_doc_full
+        })
+
+    except Exception as e:
+        return jsonify({
+            "ok": False,
             "message": str(e)
         }), 500
 
