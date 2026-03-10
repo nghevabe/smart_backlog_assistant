@@ -30,11 +30,32 @@ def agent_gen_estimate_doc(promt):
 
 
 def create_table_est_for_doc_step():
+
+    total_manday = 0
+    web_manday = 0
+    mobile_manday = 0
+    backend_manday = 0
+    uiux_manday = 0
+    qc_manday = 0
     print("create_table_est_for_doc_step")
+
     lst_header = []
     table_body = ""
     for i in range(len(lstTaskItem)):
         item_task = lstTaskItem[i]
+
+        total_manday = total_manday + int(item_task.manday)
+        if item_task.team == 'Web':
+            web_manday = web_manday + int(item_task.manday)
+        if item_task.team == 'Mobile':
+            mobile_manday = mobile_manday + int(item_task.manday)
+        if item_task.team == 'Backend':
+            backend_manday = backend_manday + int(item_task.manday)
+        if item_task.team == 'UI/UX':
+            uiux_manday = uiux_manday + int(item_task.manday)
+        if item_task.team == 'QC':
+            qc_manday = qc_manday + int(item_task.manday)
+
         if item_task.user_story_id not in lst_header:
             lst_header.append(item_task.user_story_id)
             table_body = table_body + genarate_plan.generate_row_header(i, item_task,
@@ -42,7 +63,9 @@ def create_table_est_for_doc_step():
         else:
             table_body = table_body + genarate_plan.generate_row_normal(i, item_task)
 
-    agent_gen_estimate_doc(genarate_plan.source_html_plan_doc(table_body))
+    agent_gen_estimate_doc(
+        genarate_plan.source_html_plan_doc(table_body, total_manday, web_manday, mobile_manday, backend_manday,
+                                           uiux_manday, qc_manday))
 
 
 def get_title_by_id(uid):
@@ -56,11 +79,31 @@ def get_title_by_id(uid):
 
 
 def create_table_est_for_doc_step_demo():
+    total_manday = 0
+    web_manday = 0
+    mobile_manday = 0
+    backend_manday = 0
+    uiux_manday = 0
+    qc_manday = 0
+
     print("create_table_est_for_doc_step_demo")
     lst_header = []
     table_body = ""
     for i in range(len(lstTaskItemPreview)):
         item_task = lstTaskItemPreview[i]
+
+        total_manday = total_manday + int(item_task.manday)
+        if item_task.team == 'Web':
+            web_manday = web_manday + int(item_task.manday)
+        if item_task.team == 'Mobile':
+            mobile_manday = mobile_manday + int(item_task.manday)
+        if item_task.team == 'Backend':
+            backend_manday = backend_manday + int(item_task.manday)
+        if item_task.team == 'UI/UX':
+            uiux_manday = uiux_manday + int(item_task.manday)
+        if item_task.team == 'QC':
+            qc_manday = qc_manday + int(item_task.manday)
+
         if item_task.user_story_id not in lst_header:
             lst_header.append(item_task.user_story_id)
             table_body = table_body + genarate_plan.generate_row_header(i, item_task,
@@ -68,6 +111,7 @@ def create_table_est_for_doc_step_demo():
         else:
             table_body = table_body + genarate_plan.generate_row_normal(i, item_task)
 
-    agent_gen_estimate_doc(genarate_plan.source_html_plan_doc(table_body))
-
-
+    print("XXX_total_manday: " + str(total_manday))
+    agent_gen_estimate_doc(
+        genarate_plan.source_html_plan_doc(table_body, total_manday, web_manday, mobile_manday, backend_manday,
+                                           uiux_manday, qc_manday))

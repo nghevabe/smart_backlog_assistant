@@ -109,13 +109,19 @@ def processing():
     url_doc = request.form.get("url_doc", "").strip()
     project_key = request.form.get("jira_project", "").strip()
     requirement = request.form.get("requirement_type", "").strip()
+    include_foundation = request.form.get("include_foundation_story") == "true"
+    language = request.form.get("language", "vi")
+
+    print("XXX_include_foundation_0:" + str(include_foundation))
+    print("XXX_language_0:" + str(language))
 
     document_content_input = scaner.scan_page_content(url_doc)
 
     # Trả về trang hiển thị loading + auto fetch /run_async
     return render_template(
         "processing.html",
-        document_content_input=document_content_input, requirement=requirement, project_key=project_key
+        document_content_input=document_content_input, requirement=requirement, project_key=project_key,
+        include_foundation=str(include_foundation), language=language
     )
 
 
@@ -124,11 +130,14 @@ def run_step():
     data = request.get_json()
     step = data.get("step")
     document_content_input = data.get("document_content_input", "")
+    include_foundation = data.get("include_foundation", "")
+    language = data.get("language", "vi")
     project_key = data.get("project_key", "")
 
     try:
         if step == 1:
-            create_lst_user_story_preview_step(document_content_input)
+            print("XXX_include_foundation_1:" + include_foundation)
+            create_lst_user_story_preview_step(document_content_input, include_foundation, language)
             lst = lstUserStoryPreview
             # list of UserStoryItem → dict để gửi ra JSON
             result = [

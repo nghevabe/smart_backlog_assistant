@@ -4,7 +4,7 @@ def generate_row_header(stt, task_item, user_story_title):
               <td data-label="STT">{stt}</td>
               <td data-label="Chức năng / User Story" class="content-cell"><strong>{user_story_title}</strong></td>
               <td data-label="Tên chức năng / Subtask">{task_item.title}</td>
-              <td data-label="Mô tả sơ bộ nội dung" class="small">{task_item.des}</td>
+              <td data-label="Mô tả sơ bộ nội dung" class="small">{extract_job_content(task_item.des)}</td>
               <td data-label="Nhóm thực hiện">{task_item.team}</td>
               <td data-label="Khái toán mandays">{task_item.manday}</td>
             </tr>
@@ -17,14 +17,21 @@ def generate_row_normal(stt, task_item):
               <td data-label="STT">{stt}</td>
               <td data-label="Chức năng / User Story" class="content-cell"></td>
               <td data-label="Tên chức năng / Subtask">{task_item.title}</td>
-              <td data-label="Mô tả sơ bộ nội dung" class="small">{task_item.des}</td>
+              <td data-label="Mô tả sơ bộ nội dung" class="small">{extract_job_content(task_item.des)}</td>
               <td data-label="Nhóm thực hiện">{task_item.team}</td>
               <td data-label="Khái toán mandays">{task_item.manday}</td>
             </tr>
     """
 
 
-def source_html_plan_doc(body_table_plan):
+def source_html_plan_doc(body_table_plan,
+                         total_manday,
+                         web_manday,
+                         mobile_manday,
+                         backend_manday,
+                         uiux_manday,
+                         qc_manday
+                         ):
     promt_estimate_html_source = f""" 
     <h1>Khái toán manday và phân khai kế hoạch chi tiết<h1>
 
@@ -186,11 +193,30 @@ def source_html_plan_doc(body_table_plan):
       </table>
     </div>
 
-    <h2> 4. Tổng hợp khái toán" <h2>
+  <h2>4. Tổng hợp khái toán</h2>
 
-    <!-- in đậm --> Tổng effort ước tính: <!-- in đậm -->  <!-- in thường --> ~ x ngày công (cộng tất cả các task). <in thường>
+<p>
+    <strong> * Tổng effort ước tính:</strong>
+    ~ {total_manday} ngày công (cộng tất cả các task).
+</p>
 
-    <!-- in đậm --> Phân bổ effort: <!-- in đậm --> <!-- in thường --> Web (x ngày công), Mobile (x ngày công), Backend (x ngày công), UI/UX (x ngày công), QC (x ngày công). <!-- in thường -->
-
+<p>
+    <strong> * Phân bổ effort:</strong>
+    <strong> - Web: </strong> {web_manday} Ngày Công
+    <strong> - Mobile: </strong> {mobile_manday} Ngày Công
+    <strong> - Backend: </strong> {backend_manday} Ngày Công
+    <strong> - UI/UX: </strong> {uiux_manday} Ngày Công
+    <strong> - QC: </strong>  {qc_manday} Ngày Công
+</p>
      """
     return promt_estimate_html_source
+
+
+def extract_job_content(text: str) -> str:
+    key = "Nội dung công việc:"
+    pos = text.find(key)
+
+    if pos == -1:
+        return ""
+
+    return text[pos + len(key):].strip()

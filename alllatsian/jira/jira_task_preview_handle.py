@@ -7,7 +7,7 @@ from model.user_story_item import UserStoryItem
 from utils import constant
 from utils.constant import model_config, user_config
 from utils.promts import promt_im_pmo_want_create_us, promt_create_content_subtask_feature, \
-    promt_create_content_subtask_project
+    promt_create_content_subtask_project, promt_create_content_subtask_foundation
 
 client = OpenAI(api_key=constant.open_api_key)
 
@@ -40,19 +40,169 @@ acceptance criteria here
     return completion.choices[0].message.content
 
 
-def agent_gen_user_story_cmmi(document_content_input):
+def agent_gen_user_story_foundation(document_content_input, language):
     promt = f"""
-    Tôi là 1 BA, Tôi đang cần phân rã chức năng để tạo User Story dựa vào nội dung URD.
-     Sau đây là nội dung của tài liệu tôi đã crawl được: " {document_content_input} "
-     . Hãy xác định số lượng Màn Hình trong URD và tạo ra số lượng User Story tương ứng với số lượng màn hình.
-     Lưu ý là không tách User Story quá nhỏ nhé.
-Output sẽ theo form như sau:
+Bạn là một Business Analyst chuyên nghiệp trong dự án phát triển phần mềm Agile.
+
+Nhiệm vụ của bạn:
+Phân tích tài liệu URD và tạo ra các User Story theo chuẩn Agile.
+
+--------------------------------
+INPUT DATA
+--------------------------------
+
+Nội dung tài liệu URD:
+{document_content_input}
+
+Ngôn ngữ đầu ra:
+{language}
+
+--------------------------------
+QUY TẮC PHÂN TÍCH URD
+--------------------------------
+
+1. Phải đọc kỹ nội dung URD để xác định các màn hình (screens) được mô tả.
+
+2. Một màn hình chỉ được tạo ra đúng 1 User Story.
+
+3. Không được tạo thêm màn hình hoặc chức năng không tồn tại trong tài liệu.
+
+4. Không được suy diễn hoặc tưởng tượng thêm chức năng.
+
+5. Không được tách nhỏ User Story quá chi tiết.
+
+6. Mỗi User Story phải đại diện cho chức năng chính của một màn hình.
+
+--------------------------------
+FOUNDATION USER STORY RULE
+--------------------------------
+
+Phải tạo thêm đúng 1 Foundation User Story.
+
+Foundation User Story có mục đích:
+Thiết lập nền tảng kỹ thuật cho dự án trước khi phát triển các chức năng.
+
+Foundation User Story có thể bao gồm các hoạt động như:
+
+- Setup project structure
+- Base theme / design system
+- Network configuration
+- Shared UI components
+- Base architecture
+
+Foundation User Story:
+
+- Không gắn với màn hình cụ thể
+- Chỉ được xuất hiện đúng 1 lần
+- Phải nằm ở vị trí đầu tiên trong danh sách User Story
+- Title phải bắt đầu bằng tiền tố [FOUNDATION]
+
+--------------------------------
+QUY TẮC SỐ LƯỢNG USER STORY
+--------------------------------
+
+Tổng số User Story phải bằng:
+
+TOTAL_USER_STORY =
+SỐ_MÀN_HÌNH_TRONG_URD + 1
+
+User Story đầu tiên phải là Foundation User Story.
+
+Các User Story còn lại phải tương ứng với từng màn hình trong URD.
+
+Không được tạo nhiều hơn hoặc ít hơn số lượng này.
+
+--------------------------------
+TITLE PREFIX RULE
+--------------------------------
+
+Để phân biệt loại User Story, Title phải có tiền tố như sau:
+
+Foundation User Story:
+
+Title phải bắt đầu bằng
+
+[FOUNDATION]
+
+Ví dụ:
+
+[FOUNDATION] Thiết lập nền tảng dự án
+
+Feature User Story:
+
+Title phải bắt đầu bằng
+
+[FEATURE]
+
+Ví dụ:
+
+[FEATURE] Màn hình tìm kiếm báo cáo
+
+Không được bỏ tiền tố này.
+
+--------------------------------
+YÊU CẦU NGÔN NGỮ
+--------------------------------
+
+Nếu {language} = "vi":
+
+Toàn bộ output phải viết bằng tiếng Việt.
+
+User Story format:
+
+Là một <vai trò người dùng>  
+Tôi muốn <chức năng>  
+Để <giá trị mang lại>
+
+Nếu {language} = "en":
+
+Toàn bộ output phải viết bằng English.
+
+User Story format:
+
+As a <user role>  
+I want <function>  
+So that <business value>
+
+--------------------------------
+ACCEPTANCE CRITERIA RULE
+--------------------------------
+
+Acceptance Criteria phải:
+
+- Rõ ràng
+- Có thể kiểm thử được
+- Mỗi dòng một điều kiện
+
+Không viết quá dài.
+
+--------------------------------
+FORMAT OUTPUT BẮT BUỘC
+--------------------------------
+
+Mỗi User Story phải bắt đầu bằng:
+
 #begin_response#
-Title: #tit_start#title here#tit_end#
-Description: #des_start#description here#des_end#
+
+Không được viết bất kỳ giải thích nào ngoài format.
+
+--------------------------------
+FORMAT OUTPUT
+--------------------------------
+
+#begin_response#
+Title: #tit_start#[FEATURE] title here#tit_end#
+
+Description:
+#des_start#
+user story description
+#des_end#
+
 Acceptance Criteria:
 #start#
-acceptance criteria here
+criteria 1
+criteria 2
+criteria 3
 #end#
 """
 
@@ -68,9 +218,15 @@ acceptance criteria here
     return completion.choices[0].message.content
 
 
-def create_lst_user_story_preview_step(document_content_input):
+def create_lst_user_story_preview_step(document_content_input, include_foundation, language):
     lstUserStoryPreview.clear()
-    res = agent_gen_user_story_cmmi(document_content_input)
+    if str(include_foundation).lower() == 'true':
+        print("XXX_include_foundation_value OK ")
+        res = agent_gen_user_story_foundation(document_content_input, language)
+    else:
+        print("XXX_include_foundation_value NOT ")
+        res = agent_gen_user_story_feature(document_content_input, language)
+    print("XXX_res_us: "+str(res))
     lst_story = res.split("#begin_response#")
 
     for story in lst_story:
@@ -93,8 +249,8 @@ def create_lst_user_story_preview_step(document_content_input):
 def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     content_head = promt_im_pmo_want_create_us
 
-    if requirement_type == "1":
-        content_foot = promt_create_content_subtask_project
+    if requirement_type == "FOUNDATION":
+        content_foot = promt_create_content_subtask_foundation
     else:
         content_foot = promt_create_content_subtask_feature
     full_content = content_head + "' " + promt + " '" + content_foot
@@ -107,6 +263,8 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     )
 
     response_data = completion.choices[0].message.content
+
+    print("XXX_res_sub_task: "+str(response_data))
 
     print("response_data: "+response_data)
 
@@ -122,3 +280,139 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
                              team=lst_sub_task_team[i],
                              manday=day_number)
         lstTaskItemPreview.append(task_item)
+
+
+def agent_gen_user_story_feature(document_content_input, language):
+    promt = f"""
+Bạn là một Business Analyst chuyên nghiệp trong dự án phát triển phần mềm Agile.
+
+Nhiệm vụ của bạn:
+Phân tích tài liệu URD và tạo ra các User Story theo chuẩn Agile.
+
+--------------------------------
+INPUT DATA
+--------------------------------
+
+Nội dung tài liệu URD:
+{document_content_input}
+
+Ngôn ngữ đầu ra:
+{language}
+
+--------------------------------
+QUY TẮC PHÂN TÍCH URD
+--------------------------------
+
+1. Phải đọc kỹ nội dung URD để xác định các màn hình (screens) được mô tả.
+
+2. Một màn hình chỉ được tạo ra đúng 1 User Story.
+
+3. Không được tạo thêm màn hình hoặc chức năng không tồn tại trong tài liệu.
+
+4. Không được suy diễn hoặc tưởng tượng thêm chức năng.
+
+5. Không được tách nhỏ User Story quá chi tiết.
+
+6. Mỗi User Story phải đại diện cho chức năng chính của một màn hình.
+
+--------------------------------
+QUY TẮC SỐ LƯỢNG USER STORY
+--------------------------------
+
+Tổng số User Story phải bằng:
+
+TOTAL_USER_STORY =
+SỐ_MÀN_HÌNH_TRONG_URD
+
+Không được tạo nhiều hơn hoặc ít hơn số lượng này.
+
+--------------------------------
+TITLE PREFIX RULE
+--------------------------------
+
+Tất cả User Story phải có tiền tố:
+
+[FEATURE]
+
+Ví dụ:
+
+[FEATURE] Màn hình tìm kiếm báo cáo
+
+Không được bỏ tiền tố này.
+
+--------------------------------
+YÊU CẦU NGÔN NGỮ
+--------------------------------
+
+Nếu {language} = "vi":
+
+Toàn bộ output phải viết bằng tiếng Việt.
+
+User Story format:
+
+Là một <vai trò người dùng>  
+Tôi muốn <chức năng>  
+Để <giá trị mang lại>
+
+Nếu {language} = "en":
+
+Toàn bộ output phải viết bằng English.
+
+User Story format:
+
+As a <user role>  
+I want <function>  
+So that <business value>
+
+--------------------------------
+ACCEPTANCE CRITERIA RULE
+--------------------------------
+
+Acceptance Criteria phải:
+
+- Rõ ràng
+- Có thể kiểm thử được
+- Mỗi dòng một điều kiện
+
+Không viết quá dài.
+
+--------------------------------
+FORMAT OUTPUT BẮT BUỘC
+--------------------------------
+
+Mỗi User Story phải bắt đầu bằng:
+
+#begin_response#
+
+Không được viết bất kỳ giải thích nào ngoài format.
+
+--------------------------------
+FORMAT OUTPUT
+--------------------------------
+
+#begin_response#
+Title: #tit_start#[FEATURE] title here#tit_end#
+
+Description:
+#des_start#
+user story description
+#des_end#
+
+Acceptance Criteria:
+#start#
+criteria 1
+criteria 2
+criteria 3
+#end#
+"""
+
+    completion = client.chat.completions.create(
+        model=model_config,
+        messages=[
+            {"role": user_config,
+             "content": promt
+             }
+        ]
+    )
+    # print(completion.choices[0].message.content)
+    return completion.choices[0].message.content
