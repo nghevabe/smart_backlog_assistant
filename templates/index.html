@@ -136,6 +136,7 @@
 
     <form id="epicForm" action="{{ url_for('processing') }}" method="post">
 
+        <!-- PROJECT -->
         <label for="project_list">List Projects</label>
         <div style="display:flex; gap:8px; margin-top:6px; margin-bottom:24px;">
             <select id="project_list" name="jira_project" required class="custom-select"
@@ -144,11 +145,33 @@
             </select>
         </div>
 
+        <!-- URL DOC -->
         <label for="url_doc">URL Doc</label>
-        <div style="display:flex; gap:8px; align-items:center; margin-top:6px; margin-bottom:42px;">
+        <div style="display:flex; gap:8px; align-items:center; margin-top:6px; margin-bottom:24px;">
             <input id="url_doc" name="url_doc" type="text" value="{{ url|default('') }}"
                    required style="flex:1;"
                    placeholder="Dán đường dẫn Confluence để quét và trích xuất yêu cầu"/>
+        </div>
+
+        <!-- LANGUAGE OPTION -->
+        <label for="language">Language</label>
+        <div style="display:flex; gap:8px; margin-top:6px; margin-bottom:24px;">
+            <select id="language" name="language" required
+                    style="flex:1; padding:10px; border-radius:6px; border:1px solid #ddd;">
+                <option value="vi" selected>🇻🇳 Tiếng Việt</option>
+                <option value="en">🇺🇸 English</option>
+            </select>
+        </div>
+
+        <!-- FOUNDATION OPTION -->
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:42px;">
+            <input type="checkbox"
+                   id="include_foundation_story"
+                   name="include_foundation_story"
+                   value="true">
+            <label for="include_foundation_story">
+                Generate Foundation Story
+            </label>
         </div>
 
         <!-- BUTTON -->
