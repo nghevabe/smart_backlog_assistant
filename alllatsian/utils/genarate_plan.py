@@ -24,7 +24,14 @@ def generate_row_normal(stt, task_item):
     """
 
 
-def source_html_plan_doc(body_table_plan):
+def source_html_plan_doc(body_table_plan,
+                         total_manday,
+                         web_manday,
+                         mobile_manday,
+                         backend_manday,
+                         uiux_manday,
+                         qc_manday
+                         ):
     promt_estimate_html_source = f""" 
     <h1>Khái toán manday và phân khai kế hoạch chi tiết<h1>
 
@@ -186,11 +193,20 @@ def source_html_plan_doc(body_table_plan):
       </table>
     </div>
 
-    <h2> 4. Tổng hợp khái toán" <h2>
+  <h2>4. Tổng hợp khái toán</h2>
 
-    <!-- in đậm --> Tổng effort ước tính: <!-- in đậm -->  <!-- in thường --> ~ x ngày công (cộng tất cả các task). <in thường>
+<p>
+    <strong> * Tổng effort ước tính:</strong>
+    ~ {total_manday} ngày công (cộng tất cả các task).
+</p>
 
-    <!-- in đậm --> Phân bổ effort: <!-- in đậm --> <!-- in thường --> Web (x ngày công), Mobile (x ngày công), Backend (x ngày công), UI/UX (x ngày công), QC (x ngày công). <!-- in thường -->
-
+<p>
+    <strong> * Phân bổ effort:</strong>
+    <strong> - Web: </strong> {web_manday} Ngày Công
+    <strong> - Mobile: </strong> {mobile_manday} Ngày Công
+    <strong> - Backend: </strong> {backend_manday} Ngày Công
+    <strong> - UI/UX: </strong> {uiux_manday} Ngày Công
+    <strong> - QC: </strong>  {qc_manday} Ngày Công
+</p>
      """
     return promt_estimate_html_source

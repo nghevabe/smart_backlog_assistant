@@ -71,6 +71,7 @@ acceptance criteria here
 def create_lst_user_story_preview_step(document_content_input):
     lstUserStoryPreview.clear()
     res = agent_gen_user_story_cmmi(document_content_input)
+    print("XXX_res_us: "+str(res))
     lst_story = res.split("#begin_response#")
 
     for story in lst_story:
@@ -107,6 +108,8 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type):
     )
 
     response_data = completion.choices[0].message.content
+
+    print("XXX_res_sub_task: "+str(response_data))
 
     print("response_data: "+response_data)
 
