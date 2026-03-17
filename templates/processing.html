@@ -164,7 +164,9 @@
     const payload = {
       requirement_type: {{ requirement|tojson }},
       document_content_input: {{ document_content_input|tojson }},
-      project_key: {{ project_key|tojson }}
+      project_key: {{ project_key|tojson }},
+      include_foundation: {{ include_foundation|tojson }},
+      language: {{ language|tojson }}
     };
 
     let currentStep = 1;
@@ -278,7 +280,12 @@
           <input type="text" id="title-${idx}" value="${escapeHtml(it.title)}">
 
           <label class="section-title">Description SubTask</label>
-          <textarea id="content-${idx}" rows="4">${escapeHtml(it.content)}</textarea>
+          <textarea id="content-${idx}" rows="4">
+Bộ phận thực hiện: ${escapeHtml(it.team)}
+
+Nội dung công việc:
+${escapeHtml(it.content)}
+</textarea>
 
         `;
         box.appendChild(el);

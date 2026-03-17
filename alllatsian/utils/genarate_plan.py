@@ -4,7 +4,7 @@ def generate_row_header(stt, task_item, user_story_title):
               <td data-label="STT">{stt}</td>
               <td data-label="Chức năng / User Story" class="content-cell"><strong>{user_story_title}</strong></td>
               <td data-label="Tên chức năng / Subtask">{task_item.title}</td>
-              <td data-label="Mô tả sơ bộ nội dung" class="small">{task_item.des}</td>
+              <td data-label="Mô tả sơ bộ nội dung" class="small">{extract_job_content(task_item.des)}</td>
               <td data-label="Nhóm thực hiện">{task_item.team}</td>
               <td data-label="Khái toán mandays">{task_item.manday}</td>
             </tr>
@@ -17,7 +17,7 @@ def generate_row_normal(stt, task_item):
               <td data-label="STT">{stt}</td>
               <td data-label="Chức năng / User Story" class="content-cell"></td>
               <td data-label="Tên chức năng / Subtask">{task_item.title}</td>
-              <td data-label="Mô tả sơ bộ nội dung" class="small">{task_item.des}</td>
+              <td data-label="Mô tả sơ bộ nội dung" class="small">{extract_job_content(task_item.des)}</td>
               <td data-label="Nhóm thực hiện">{task_item.team}</td>
               <td data-label="Khái toán mandays">{task_item.manday}</td>
             </tr>
@@ -210,3 +210,13 @@ def source_html_plan_doc(body_table_plan,
 </p>
      """
     return promt_estimate_html_source
+
+
+def extract_job_content(text: str) -> str:
+    key = "Nội dung công việc:"
+    pos = text.find(key)
+
+    if pos == -1:
+        return ""
+
+    return text[pos + len(key):].strip()
