@@ -151,7 +151,7 @@ def run_step():
             return jsonify({"status": "success", "result": [], "step": 2})
 
         elif step == 3:
-            create_lst_task_preview_step("0")
+            create_lst_task_preview_step(language)
             lst = lstTaskItemPreview
 
             result = [

@@ -246,14 +246,14 @@ def create_lst_user_story_preview_step(document_content_input, include_foundatio
     return lstUserStoryPreview
 
 
-def agent_gen_sub_task_preview(story_id, promt, requirement_type):
-    content_head = promt_im_pmo_want_create_us
+def agent_gen_sub_task_preview(story_id, promt, requirement_type, language):
 
     if requirement_type == "FOUNDATION":
-        content_foot = promt_create_content_subtask_foundation
+        full_content = promt_create_content_subtask_foundation(promt, language=language)
     else:
-        content_foot = promt_create_content_subtask_feature
-    full_content = content_head + "' " + promt + " '" + content_foot
+        full_content = promt_create_content_subtask_project(promt, language=language)
+
+    print("ZZZ_full_content: "+str(full_content))
 
     completion = client.chat.completions.create(
         model=model_config,
