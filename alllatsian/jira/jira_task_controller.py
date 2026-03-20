@@ -6,9 +6,9 @@ from data.data_app import lstUserStoryItem, lstTaskItemPreview
 
 def create_lst_task_preview_step(language):
     lstTaskItemPreview.clear()
-    print("create_lst_task_preview_step: "+str(len(lstUserStoryItem)))
+
     for i in range(len(lstUserStoryItem)):
-        print("ZZZ_lstUserStoryItem[i].title: " + str(lstUserStoryItem[i].title))
+
         if 'FOUNDATION' in lstUserStoryItem[i].title:
             print("ZZZ_lstUserStoryItem[i].FOUNDATIONED")
             agent_gen_sub_task_preview(lstUserStoryItem[i].uid,

@@ -253,8 +253,6 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type, language):
     else:
         full_content = promt_create_content_subtask_project(promt, language=language)
 
-    print("ZZZ_full_content: "+str(full_content))
-
     completion = client.chat.completions.create(
         model=model_config,
         messages=[
@@ -264,9 +262,7 @@ def agent_gen_sub_task_preview(story_id, promt, requirement_type, language):
 
     response_data = completion.choices[0].message.content
 
-    print("XXX_res_sub_task: "+str(response_data))
-
-    print("response_data: "+response_data)
+    print("response_data: "+str(response_data))
 
     lst_sub_task_title = re.findall(regexTitle, response_data)
     lst_sub_task_content = re.findall(regexContent, response_data)

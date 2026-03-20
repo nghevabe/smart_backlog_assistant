@@ -5,10 +5,6 @@ from data.data_app import lstTaskItem, lstUserStoryItem, lstTaskItemPreview
 from utils.config import confluence_config
 from datetime import datetime
 
-from io import BytesIO
-from docx import Document
-from html2docx import html2docx
-import pypandoc
 
 
 def agent_gen_estimate_doc(promt):
@@ -23,7 +19,7 @@ def agent_gen_estimate_doc(promt):
     s = str(status.get('_links'))
     regex = r"'webui': '(.*)', 'edituiv2'"
     match = re.findall(regex, s)
-    parser_content.url_est_doc_full = "https://bidv-ba-assistant317.atlassian.net/wiki" + match[0]
+    parser_content.url_est_doc_full = "https://bidv-ba-assistant2026.atlassian.net/wiki" + match[0]
     print(parser_content.url_est_doc_full)
 
     jira_task_service_handle.attach_link_confluence_to_task()
